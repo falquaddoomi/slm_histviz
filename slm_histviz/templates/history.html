@@ -1,5 +1,56 @@
 {% extends 'layout.html' %}
 
-{% block body %}
+{% block title %}Timeline{% endblock %}
 
+{% block script %}
+    <script type="text/javascript">
+    $(window).load(function() {
+        // create a datablock in which our content will go, i guess
+
+        var connects = new vis.DataSet([
+            {% for connect in connections %}
+            { id: {{ connect.id }}, content: "{{ connect.username }} ({{ connect.interface }}) {{ connect.status }}", start: "{{ connect.created_at }}" },
+            {% endfor %}
+            {% for item in accesses %}
+            { id: {{ item.id }}, content: "{{ item.username }} => {{ item.protocol }}://{{ item.hostname }}" , start: "{{ item.created_at }}" },
+            {% endfor %}
+        ]);
+
+        var options = {
+            format: {
+              minorLabels: {
+                millisecond:'SSS',
+                second:     's',
+                minute:     'h:mma',
+                hour:       'h:mma',
+                weekday:    'ddd D',
+                day:        'D',
+                month:      'MMM',
+                year:       'YYYY'
+              },
+              majorLabels: {
+                millisecond:'HH:mm:ss',
+                second:     'D MMMM HH:mm',
+                minute:     'ddd D MMMM',
+                hour:       'ddd D MMMM',
+                weekday:    'MMMM YYYY',
+                day:        'MMMM YYYY',
+                month:      'YYYY',
+                year:       ''
+              }
+            },
+            // zoomable: false,
+            zoomKey: 'metaKey',
+            type: 'point'
+        };
+
+        var timeline = new vis.Timeline(document.getElementById('connect_timeline'), connects, options);
+    });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div id="connect_timeline">
+
+    </div>
 {% endblock %}
