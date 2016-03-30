@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div>
+        <h3>Connections for <b>faisal</b>:</h3>
+
+        <div style="margin: 20px;">
+            {% for item in connections %}
+            <div>{{ item }}</div>
+            {% endfor %}
+        </div>
+
+        <h3>Last 100 HTTP/S accesses for <b>faisal</b>:</h3>
+
+        <div style="margin: 20px;">
+            {% for item in accesses %}
+            <div>{{ item }}</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

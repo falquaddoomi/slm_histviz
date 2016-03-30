@@ -1,0 +1,8 @@
+/secrets/*
+/.venv
+/.idea
+*.pyc
+.DS_Store
+Thumbs.db
+*.db
+*.log
