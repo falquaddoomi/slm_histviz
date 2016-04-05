@@ -22,7 +22,18 @@ def datadatump():
 def history():
     ctx = {
         'connections': ConnectLog.query.all(),
-        'accesses': AccessLog.query.order_by(AccessLog.created_at.desc()).limit(100),
+        'accesses': (
+            AccessLog.query
+                # .filter(AccessLog.hostname.notilike("%1e100.net"))
+                .filter(
+                    AccessLog.hostname.ilike("%facebook%") |
+                    AccessLog.hostname.ilike("%twitter%") |
+                    AccessLog.hostname.ilike("%instagram%")
+                )
+                # .filter(AccessLog.hostname.notilike("%amazonaws.com"))
+                .order_by(AccessLog.created_at.desc())
+                .limit(100)
+        ),
     }
 
     return render_template('history.html', **ctx)
