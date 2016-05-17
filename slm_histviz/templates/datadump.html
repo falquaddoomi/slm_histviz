@@ -2,9 +2,9 @@
 
 {% block title %}Data Dump{% endblock %}
 
-{% block body %}
+{% block content %}
     <div>
-        <h3>Connections for <b>faisal</b>:</h3>
+        <h3>Connections for <b>{{ current_user.username }}</b>:</h3>
 
         <div style="margin: 20px;">
             {% for item in connections %}
@@ -12,7 +12,7 @@
             {% endfor %}
         </div>
 
-        <h3>Last 100 HTTP/S accesses for <b>faisal</b>:</h3>
+        <h3>Last 100 HTTP/S accesses for <b>{{ current_user.username }}</b>:</h3>
 
         <div style="margin: 20px;">
             {% for item in accesses %}

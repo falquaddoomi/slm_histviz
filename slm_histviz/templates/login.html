@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container">
+        {% if form.errors %}
+        <div style="padding-top: 10px;">
+        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+
+                {{ form[field_name].label }}: {{ error }}
+            </div>
+            {% endfor %}
+        {% endfor %}
+        </div>
+        {% endif %}
+
+        <form class="form-signin" method="post" action="{{ url_for('login')  }}">
+            <h2 class="form-signin-heading">Please sign in</h2>
+
+            {{ form.csrf_token }}
+
+            {{ form.username.label }}
+            {{ form.username(class_="form-control", placeholder="Username", required="true", autofocus="true", style="margin-bottom: 1em;" ) }}
+
+            {{ form.password.label }}
+            {{ form.password(class_="form-control", placeholder="Password", required="true", style="margin-bottom: 1em;") }}
+
+            {{ form.remember_me.label }}
+            {{ form.remember_me() }}
+
+{#            <label for="inputEmail" class="sr-only">Email address</label>#}
+{#            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus style="margin-bottom: 1em;" />#}
+{##}
+{#            <label for="inputPassword" class="sr-only">Password</label>#}
+{#            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required style="margin-bottom: 1em;" />#}
+{##}
+{#            <div class="checkbox">#}
+{#                <label>#}
+{#                    <input type="checkbox" value="remember-me"> Remember me#}
+{#                </label>#}
+{#            </div>#}
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <input type=hidden value="{{ next or '' }}" name="next" />
+        </form>
+    </div>
+{% endblock %}
