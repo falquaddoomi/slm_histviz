@@ -1,6 +1,7 @@
 from slm_histviz import app
 
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext import login as flask_login
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql.base import INET
 
@@ -18,25 +19,27 @@ app.config.update(
 db = SQLAlchemy(app)
 
 
-# class User(flask_login.UserMixin):
-#     email = db.Column(db.String, primary_key=True)
-#     authenticated = db.Column(db.Boolean, default=False)
-#     credentials = db.Column(db.String, nullable=True)
-#
-#     def is_authenticated(self):
-#         return self.authenticated
-#
-#     def get_id(self):
-#         return unicode(self.email)
-#
-#     def __init__(self, email):
-#         self.email = email
-#
-#     def __repr__(self):
-#         return '<User %r>' % self.email
-#
-#     def __unicode__(self):
-#         return self.email
+class User(db.Model, flask_login.UserMixin):
+    username = db.Column(db.String, primary_key=True)
+    password = db.Column(db.String)
+    authenticated = db.Column(db.Boolean, default=False)
+
+    def is_authenticated(self):
+        return self.authenticated
+
+    def get_id(self):
+        return unicode(self.username)
+
+    def __init__(self, username, password=None):
+        self.username = username
+        self.password = password
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+    def __unicode__(self):
+        return self.username
+
 
 class AccessLog(db.Model):
     __tablename__ = 'access_log'
