@@ -1,0 +1,8 @@
+/etc/ppp/ip-either.local "disconnected" "$@"
+
+# read IFACE TERM_ID SPEED OUR_IP LOCAL_CLIENT_IP REMOTE_CLIENT_IP <<<$( echo "$@")
+# STATUS="disconnected"
+# if [[ ${IFACE} == ppp* ]]; then
+#   USER=$( last | grep ${IFACE} | head -n 1 | cut -d " " -f 1 )
+#   echo "User ${USER} ${STATUS} on ${IFACE} :: remote IP ${REMOTE_CLIENT_IP}, local IP ${LOCAL_CLIENT_IP}!" >> /var/log/interfaces.txt
+# fi
