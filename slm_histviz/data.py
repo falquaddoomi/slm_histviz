@@ -9,11 +9,12 @@ import os
 filepath = os.path.dirname(os.path.realpath(__file__))
 
 app.config.update(
-    SQLALCHEMY_DATABASE_URI='sqlite:///%s/database.db' % filepath,
+    # SQLALCHEMY_DATABASE_URI='sqlite:///%s/database.db' % filepath,
+    SQLALCHEMY_DATABASE_URI="postgresql:///slm_distraction",
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    SQLALCHEMY_BINDS={
-        'connect_log': 'postgresql:///slm_distraction'
-    }
+    # SQLALCHEMY_BINDS={
+    #     'connect_log': 'postgresql:///slm_distraction'
+    # }
 )
 
 db = SQLAlchemy(app)
@@ -23,12 +24,16 @@ class User(db.Model, flask_login.UserMixin):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     authenticated = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String, default="user")
 
     def is_authenticated(self):
         return self.authenticated
 
     def get_id(self):
         return unicode(self.username)
+
+    def get_urole(self):
+        return unicode(self.role)
 
     def __init__(self, username, password=None):
         self.username = username
@@ -43,7 +48,7 @@ class User(db.Model, flask_login.UserMixin):
 
 class AccessLog(db.Model):
     __tablename__ = 'access_log'
-    __bind_key__ = "connect_log"
+    # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('access_log_id_seq'::regclass)"))
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
@@ -60,7 +65,7 @@ class AccessLog(db.Model):
 
 class ConnectLog(db.Model):
     __tablename__ = 'connect_log'
-    __bind_key__ = "connect_log"
+    # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('connect_log_id_seq'::regclass)"))
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
