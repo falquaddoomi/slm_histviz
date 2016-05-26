@@ -1,8 +1,10 @@
 import flask
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from flask import render_template, redirect, url_for, request
+from sqlalchemy import text
+
 from slm_histviz import app
-from slm_histviz.data import ConnectLog, AccessLog, Session, User
+from slm_histviz.data import db, ConnectLog, AccessLog, Session, User
 from slm_histviz.forms import LoginForm
 
 
@@ -64,6 +66,10 @@ def timeline():
     ctx = {
         'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
         'sessions': Session.query.filter(Session.username == current_user.username),
+        'rolled_access': db.engine.execute(text(
+            """select username, hostname, protocol, min(created_at) as started_at, max(created_at) as ended_at, count(*) as hits
+            from access_log where username=:name GROUP BY username, hostname, protocol, date_trunc('second', created_at);"""
+        ).params(name=current_user.username)),
         'accesses': (
             AccessLog.query
                 # .filter(AccessLog.hostname.notilike("%1e100.net"))

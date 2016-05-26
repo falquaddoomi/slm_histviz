@@ -13,15 +13,17 @@
 {#            {% endfor %}#}
             {% for session in sessions %}
             {
-                id: {{ session.id }},
                 content: "{{ session.username }} ({{ session.interface }}), {{ session.duration() }}",
                 start: "{{ session.started_at }}",
                 end: "{{ session.ended_at }}",
                 type: 'range'
             },
             {% endfor %}
-            {% for item in accesses %}
-            { id: {{ item.id }}, content: "{{ item.username }} => {{ item.protocol }}://{{ item.hostname }}" , start: "{{ item.created_at }}" },
+{#            {% for item in accesses %}#}
+{#            { id: {{ item.id }}, content: "{{ item.username }} => {{ item.protocol }}://{{ item.hostname }}" , start: "{{ item.created_at }}" },#}
+{#            {% endfor %}#}
+            {% for item in rolled_access %}
+            { content: "{{ item.protocol }}://{{ item.hostname }} ({{ item.hits }}x)" , start: "{{ item.started_at }}" },
             {% endfor %}
         ]);
 
