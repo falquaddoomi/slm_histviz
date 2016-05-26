@@ -13,17 +13,17 @@
 {#            {% endfor %}#}
             {% for session in sessions %}
             {
-                content: "{{ session.username }} ({{ session.interface }}), {{ session.duration() }}",
+                content: "connected for {{ session.duration() }}",
                 start: "{{ session.started_at }}",
                 end: "{{ session.ended_at }}",
-                type: 'range'
+                type: 'background'
             },
             {% endfor %}
 {#            {% for item in accesses %}#}
 {#            { id: {{ item.id }}, content: "{{ item.username }} => {{ item.protocol }}://{{ item.hostname }}" , start: "{{ item.created_at }}" },#}
 {#            {% endfor %}#}
             {% for item in rolled_access %}
-            { content: "{{ item.protocol }}://{{ item.hostname }} ({{ item.hits }}x)" , start: "{{ item.started_at }}" },
+            { content: "{{ resolve_hostname(item.hostname) }} ({{ item.hits }}x, {{ item.protocol }})" , start: "{{ item.started_at }}" },
             {% endfor %}
         ]);
 
@@ -50,7 +50,8 @@
                 year:       ''
               }
             },
-            // max: Date.now(),
+            height: '800px',
+            max: Date.now(),
             // zoomable: false,
             zoomKey: 'metaKey',
             type: 'point'

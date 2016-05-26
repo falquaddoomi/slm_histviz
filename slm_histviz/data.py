@@ -9,6 +9,7 @@ import datetime
 import dateutil.relativedelta
 
 import os
+
 filepath = os.path.dirname(os.path.realpath(__file__))
 
 app.config.update(
@@ -69,6 +70,10 @@ class AccessLog(db.Model):
     def __repr__(self):
         return "AccessLog for %s to %s" % (self.username, self.hostname)
 
+    def resolved_service(self):
+        service = HostServiceMapping.query.filter(self.hostname.like(HostServiceMapping.pattern)).first()
+        return service if service is not None else '<%s>' % self.hostname
+
 
 class ConnectLog(db.Model):
     __tablename__ = 'connect_log'
@@ -86,12 +91,18 @@ class ConnectLog(db.Model):
     local_ip = db.Column(INET)
     remote_ip = db.Column(INET)
 
-
     def __str__(self):
         return "%s (%s :: %s) %s on %s" % (self.username, self.local_ip, self.interface, self.status, self.created_at)
 
     def __repr__(self):
         return "ConnectLog (%s) for %s at %s" % (self.status, self.username, self.local_ip)
+
+
+class HostServiceMapping(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    service = db.Column(db.String)
+    pattern = db.Column(db.String)
 
 
 class Session(db.Model):
@@ -112,7 +123,7 @@ class Session(db.Model):
     def duration(self):
         rd = dateutil.relativedelta.relativedelta(self.ended_at, self.started_at)
         return ", ".join(
-            [ "%d%s" % (q, u) for q, u in zip((rd.hours, rd.minutes, rd.seconds), ("hr","min","sec")) if q > 0 ]
+            ["%d%s" % (q, u) for q, u in zip((rd.hours, rd.minutes, rd.seconds), ("hr", "min", "sec")) if q > 0]
         )
 
 # init the db if it hasn't already been init'd

@@ -1,10 +1,10 @@
 import flask
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from flask import render_template, redirect, url_for, request
-from sqlalchemy import text
+from sqlalchemy import text, literal
 
 from slm_histviz import app
-from slm_histviz.data import db, ConnectLog, AccessLog, Session, User
+from slm_histviz.data import db, ConnectLog, AccessLog, Session, User, HostServiceMapping
 from slm_histviz.forms import LoginForm
 
 
@@ -60,7 +60,17 @@ def datadump():
     return render_template('datadump.html', **ctx)
 
 
-@app.route('/history')
+@app.context_processor
+def my_utility_processor():
+
+    def resolve_hostname(hostname):
+        service = HostServiceMapping.query.filter(literal(hostname).like(HostServiceMapping.pattern)).first()
+        return service.service if service is not None else '<%s>' % hostname
+
+    return dict(resolve_hostname=resolve_hostname)
+
+
+@app.route('/timeline')
 @login_required
 def timeline():
     ctx = {
@@ -85,4 +95,4 @@ def timeline():
         ),
     }
 
-    return render_template('history.html', **ctx)
+    return render_template('timeline.html', **ctx)
