@@ -5,6 +5,9 @@ from flask.ext import login as flask_login
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql.base import INET
 
+import datetime
+import dateutil.relativedelta
+
 import os
 filepath = os.path.dirname(os.path.realpath(__file__))
 
@@ -51,8 +54,12 @@ class AccessLog(db.Model):
     # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('access_log_id_seq'::regclass)"))
+
+    username = db.Column(db.String, db.ForeignKey('user.username'))
+    # user = db.relationship('User', backref=db.backref('accesses', lazy='dynamic'))
+
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
-    username = db.Column(db.String)
+
     hostname = db.Column(db.String)
     protocol = db.Column(db.String)
 
@@ -68,12 +75,17 @@ class ConnectLog(db.Model):
     # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('connect_log_id_seq'::regclass)"))
+
+    username = db.Column(db.String, db.ForeignKey('user.username'))
+    # user = db.relationship('User', backref=db.backref('connects', lazy='dynamic'))
+
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
+
     status = db.Column(db.String(30))
     interface = db.Column(db.String(30))
-    username = db.Column(db.String)
     local_ip = db.Column(INET)
     remote_ip = db.Column(INET)
+
 
     def __str__(self):
         return "%s (%s :: %s) %s on %s" % (self.username, self.local_ip, self.interface, self.status, self.created_at)
@@ -82,5 +94,26 @@ class ConnectLog(db.Model):
         return "ConnectLog (%s) for %s at %s" % (self.status, self.username, self.local_ip)
 
 
+class Session(db.Model):
+    __tablename__ = 'sessions'
+
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+
+    username = db.Column(db.String, db.ForeignKey('user.username'))
+    # user = db.relationship('User', backref=db.backref('connects', lazy='dynamic'))
+
+    started_at = db.Column(db.DateTime)
+    ended_at = db.Column(db.DateTime)
+
+    interface = db.Column(db.String(30))
+    local_ip = db.Column(INET)
+    remote_ip = db.Column(INET)
+
+    def duration(self):
+        rd = dateutil.relativedelta.relativedelta(self.ended_at, self.started_at)
+        return ", ".join(
+            [ "%d%s" % (q, u) for q, u in zip((rd.hours, rd.minutes, rd.seconds), ("hr","min","sec")) if q > 0 ]
+        )
+
 # init the db if it hasn't already been init'd
-db.create_all()
+# db.create_all()

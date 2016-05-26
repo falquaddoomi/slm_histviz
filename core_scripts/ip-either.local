@@ -12,7 +12,8 @@ if [[ ${IFACE} == ppp* ]]; then
   echo "User ${LOGIN_USER} ${STATUS} on ${IFACE} :: remote IP ${REMOTE_CLIENT_IP}, local IP ${LOCAL_CLIENT_IP}!" >> /var/log/interfaces.txt
 
   if [[ ${STATUS} == "connected" ]]; then
-    echo -e "connected\t${IFACE}\t${LOGIN_USER}\t${LOCAL_CLIENT_IP}\t${REMOTE_CLIENT_IP}" | psql -d slm_distraction -c "\copy connect_log (status, interface, username, local_ip, remote_ip) from stdin"
+    echo -e "connected\t${IFACE}\t${LOGIN_USER}\t${LOCAL_CLIENT_IP}\t${REMOTE_CLIENT_IP}" | \
+        psql -d slm_distraction -c "\copy connect_log (status, interface, username, local_ip, remote_ip) from stdin"
 
     while read REMOTE_HOST PROTOCOL; do
       echo -e "${LOGIN_USER}\t${REMOTE_HOST}\t${PROTOCOL}" | \
@@ -24,8 +25,9 @@ if [[ ${IFACE} == ppp* ]]; then
 
     # ^ grab packets that contain data (no SYN or FIN) on the HTTP/S ports
 
+  elif [[ ${STATUS} == "disconnected" ]]; then
     # and close out when we're done
-    # FIXME: maybe this should be done in the down branch?
+    # FIXME: trying it out in the down branch
     echo -e "disconnected\t${IFACE}\t${LOGIN_USER}\t${LOCAL_CLIENT_IP}\t${REMOTE_CLIENT_IP}" | \
       psql -d slm_distraction -c "\copy connect_log (status, interface, username, local_ip, remote_ip) from stdin"
   fi

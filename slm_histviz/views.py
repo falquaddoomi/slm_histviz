@@ -2,7 +2,7 @@ import flask
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from flask import render_template, redirect, url_for, request
 from slm_histviz import app
-from slm_histviz.data import ConnectLog, AccessLog, User
+from slm_histviz.data import ConnectLog, AccessLog, Session, User
 from slm_histviz.forms import LoginForm
 
 
@@ -63,6 +63,7 @@ def datadump():
 def timeline():
     ctx = {
         'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
+        'sessions': Session.query.filter(Session.username == current_user.username),
         'accesses': (
             AccessLog.query
                 # .filter(AccessLog.hostname.notilike("%1e100.net"))

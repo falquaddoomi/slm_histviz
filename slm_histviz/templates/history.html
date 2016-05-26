@@ -8,8 +8,17 @@
         // create a datablock in which our content will go, i guess
 
         var connects = new vis.DataSet([
-            {% for connect in connections %}
-            { id: {{ connect.id }}, content: "{{ connect.username }} ({{ connect.interface }}) {{ connect.status }}", start: "{{ connect.created_at }}" },
+{#            {% for connect in connections %}#}
+{#            { id: {{ connect.id }}, content: "{{ connect.username }} ({{ connect.interface }}) {{ connect.status }}", start: "{{ connect.created_at }}" },#}
+{#            {% endfor %}#}
+            {% for session in sessions %}
+            {
+                id: {{ session.id }},
+                content: "{{ session.username }} ({{ session.interface }}), {{ session.duration() }}",
+                start: "{{ session.started_at }}",
+                end: "{{ session.ended_at }}",
+                type: 'range'
+            },
             {% endfor %}
             {% for item in accesses %}
             { id: {{ item.id }}, content: "{{ item.username }} => {{ item.protocol }}://{{ item.hostname }}" , start: "{{ item.created_at }}" },
@@ -39,6 +48,7 @@
                 year:       ''
               }
             },
+            // max: Date.now(),
             // zoomable: false,
             zoomKey: 'metaKey',
             type: 'point'
