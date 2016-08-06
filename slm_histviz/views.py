@@ -54,7 +54,7 @@ def logout():
 def datadump():
     ctx = {
         'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
-        'accesses': AccessLog.query.filter(AccessLog.username == current_user.username).order_by(AccessLog.created_at.desc()).limit(100),
+        'accesses': AccessLog.query.filter(AccessLog.username == current_user.username).order_by(AccessLog.created_at.desc()).limit(25),
     }
 
     return render_template('datadump.html', **ctx)

@@ -100,5 +100,9 @@ Use the speciic setttings for each platform to connect to the VPN network.
 - Select the checkbox for `Show VPN status` in menu bar so you know when you are connected/disconnected
 - Click `Advanced` >> uncheck box `Disconnect when user logs out` (make sure other boxes are checked) >> Click OK
 - Click `Connect` (button under Encryption) >> `Apply` >> `Save Configuration` (ignore warnings for now)
+- Click `Advanced` then `DNS` and `+` on bottom left. Add two entries: `8.8.8.8`  and `8.8.4.4`. Click `Ok`.
 - Make sure you see that the Connect Time is counting otherwise you are still not connected and have to click `Connect` again.
 - All done. Your VPN network is now active.
+
+
+## Mac auto-connect VPN
