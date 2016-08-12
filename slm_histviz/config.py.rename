@@ -1,0 +1,8 @@
+DEBUG = True
+SECRET_KEY = 'generate-me' # use uuid.uuid4() to generate a value for this
+
+DB_USER='changeme' # change this to the username on your db
+DB_PASSWORD='changeme' # change this to the password on your db
+
+SQLALCHEMY_DATABASE_URI="postgresql://slm.smalldata.io/slm_distraction"
+SQLALCHEMY_TRACK_MODIFICATIONS=False

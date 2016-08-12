@@ -7,3 +7,4 @@ Thumbs.db
 *.db
 *.log
 .env
+/slm_histviz/config.py
