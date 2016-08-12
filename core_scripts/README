@@ -1,0 +1,17 @@
+OVERVIEW:
+
+these scripts are custom handlers for ppp connection/disconnection events. they should be copied to /etc/ppp on your
+server and marked executable. Only the scripts that differ from the default ones in that directory are included here.
+
+FUNCTIONALITY:
+
+- ip-up.local is invoked by ip-up when a user connects to the ppp server. it invokes ip-either.local with the first
+argument "connected" and the rest of the arguments being the default ones supplied from ip-up.
+
+- ip-down.local is invoked by ip-down when a user disconnects from the ppp server. it invokes ip-either.local with the
+first argument "disconnected" and the rest of the arguments being the default ones supplied from ip-down.
+
+- ip-either.local is an addition to the default scripts. it handles both connection and disconnection events
+for ppp clients. specifically, it inserts a record into the 'connections' table of a local postgres server
+when a user connects and disconnects. it also spawns a tcpdump session to track the connection's traffic,
+which inserts into an 'accesses' table whenever a packet is sent or received by the connected user.
