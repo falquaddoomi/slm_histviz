@@ -12,5 +12,5 @@ from slm_histviz import app
 
 manager = flask.ext.restless.APIManager(app, flask_sqlalchemy_db=db)
 
-manager.create_api(AccessLog, methods=['GET'])
-manager.create_api(ConnectLog, methods=['GET'])
+manager.create_api(AccessLog, results_per_page=1000, methods=['GET'])
+manager.create_api(ConnectLog, results_per_page=1000, methods=['GET'])
