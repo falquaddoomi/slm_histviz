@@ -20,8 +20,6 @@ ipython-genutils==0.1.0
 itsdangerous==0.24
 Jinja2==2.8
 kombu==3.0.35
-Logbook==1.0.0
-lxml==3.6.1
 Mako==1.0.4
 MarkupSafe==0.23
 mimerender==0.6.0
@@ -30,8 +28,6 @@ pexpect==4.0.1
 pickleshare==0.7.2
 psycopg2==2.6.1
 ptyprocess==0.5.1
-py==1.4.31
-pyshark==0.3.6.1
 python-dateutil==2.5.2
 python-editor==1.0
 python-mimeparse==1.5.1
@@ -41,6 +37,5 @@ six==1.10.0
 sqlacodegen==1.1.6
 SQLAlchemy==1.0.12
 traitlets==4.2.1
-trollius==1.0.4
 Werkzeug==0.11.5
 WTForms==2.1
