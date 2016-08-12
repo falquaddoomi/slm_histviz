@@ -4,25 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask.ext import login as flask_login
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql.base import INET
-
 import datetime
 import dateutil.relativedelta
 
-import os
-
-filepath = os.path.dirname(os.path.realpath(__file__))
-
-app.config.update(
-    # SQLALCHEMY_DATABASE_URI='sqlite:///%s/database.db' % filepath,
-    SQLALCHEMY_DATABASE_URI="postgresql:///slm_distraction",
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    # SQLALCHEMY_BINDS={
-    #     'connect_log': 'postgresql:///slm_distraction'
-    # }
-)
 
 db = SQLAlchemy(app)
-
 
 class User(db.Model, flask_login.UserMixin):
     username = db.Column(db.String, primary_key=True)
@@ -52,7 +38,6 @@ class User(db.Model, flask_login.UserMixin):
 
 class AccessLog(db.Model):
     __tablename__ = 'access_log'
-    # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('access_log_id_seq'::regclass)"))
 
@@ -77,7 +62,6 @@ class AccessLog(db.Model):
 
 class ConnectLog(db.Model):
     __tablename__ = 'connect_log'
-    # __bind_key__ = "connect_log"
 
     id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('connect_log_id_seq'::regclass)"))
 
@@ -125,6 +109,3 @@ class Session(db.Model):
         return ", ".join(
             ["%d%s" % (q, u) for q, u in zip((rd.hours, rd.minutes, rd.seconds), ("hr", "min", "sec")) if q > 0]
         )
-
-# init the db if it hasn't already been init'd
-# db.create_all()
