@@ -39,7 +39,7 @@ class User(db.Model, flask_login.UserMixin):
 class AccessLog(db.Model):
     __tablename__ = 'access_log'
 
-    id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('access_log_id_seq'::regclass)"))
+    id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String, db.ForeignKey('user.username'))
     # user = db.relationship('User', backref=db.backref('accesses', lazy='dynamic'))
@@ -63,7 +63,7 @@ class AccessLog(db.Model):
 class ConnectLog(db.Model):
     __tablename__ = 'connect_log'
 
-    id = db.Column(db.Integer, primary_key=True, server_default=text("nextval('connect_log_id_seq'::regclass)"))
+    id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String, db.ForeignKey('user.username'))
     # user = db.relationship('User', backref=db.backref('connects', lazy='dynamic'))
