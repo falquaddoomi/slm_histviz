@@ -21,14 +21,3 @@ if [[ ${IFACE} == ppp* ]]; then
     # this is now handled in the python script as a single session
   fi
 fi
-
-# connected\tppp0\tfaisal\t192.168.0.100\t128.84.126.57
-
-# tcpdump sample output:
-# 19:02:11.585071 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [P.], seq 1:160, ack 583, win 60, options [nop,nop,TS val 2320325808 ecr 12434349], length 159
-# 19:02:11.613290 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [.], ack 160, win 643, options [nop,nop,TS val 12434352 ecr 2320325808], length 0
-# 19:02:11.615024 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [P.], seq 583:634, ack 160, win 643, options [nop,nop,TS val 12434352 ecr 2320325808], length 51
-# 19:02:11.616546 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [P.], seq 160:233, ack 634, win 60, options [nop,nop,TS val 2320325840 ecr 12434352], length 73
-# 19:02:11.618235 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [.], seq 634:1974, ack 160, win 643, options [nop,nop,TS val 12434353 ecr 2320325808], length 1340
-# 19:02:11.618693 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [P.], seq 1974:2109, ack 160, win 643, options [nop,nop,TS val 12434353 ecr 2320325808], length 135
-# 19:02:11.620114 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [.], ack 2109, win 81, options [nop,nop,TS val 2320325843 ecr 12434353], length 0
