@@ -13,6 +13,9 @@
         <div style="margin: 20px;">
             {% for item in connections %}
             <div>{{ item }}</div>
+            {% if item.status == 'connected' %}
+            <p> ***************************************** </p>
+            {% endif %}
             {% endfor %}
         </div>
 
