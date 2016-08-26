@@ -30,5 +30,13 @@
             </div>
             {% endfor %}
         </div>
+
+        <h3>Sessions for <b>{{ current_user.username }}</b>:</h3>
+
+        <div style="margin: 20px;">
+            {% for item in sessions %}
+            <div>{{ item }}</div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

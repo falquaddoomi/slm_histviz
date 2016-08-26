@@ -1,6 +1,8 @@
 """ views.py """
+import re
 
 import flask
+import socket
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from flask import render_template, request
 from sqlalchemy import text, literal
@@ -70,10 +72,11 @@ def datadump():
     ctx = {
         'connections': ConnectLog.query.filter(
             ConnectLog.username ==
-            current_user.username).order_by(ConnectLog.created_at.desc()).limit(10),
+            current_user.username).order_by(ConnectLog.created_at.desc()).limit(100),
         'accesses': AccessLog.query.filter(
             AccessLog.username ==
-            current_user.username).order_by(AccessLog.created_at.desc()).limit(25),
+            current_user.username).order_by(AccessLog.created_at.desc()).limit(100),
+        'sessions': Session.query.filter(Session.username == current_user.username),
     }
 
     return render_template('datadump.html', **ctx)
@@ -128,5 +131,21 @@ def _jinja2_filter_nyctime(date, fmt=None):
 def _jinja2_strformat_datetime(date, fmt=None):
     return date.strftime('%Y/%m/%d, %-I:%M %p (%Z)')
 
-# TODO: track how much time is spent on Facebook as starting point for other sites
+
+is_ip_regex = re.compile(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$")
+
+
+@app.template_filter('lookup_ip')
+def lookup_ip(in_ip):
+    if not in_ip:
+        return "(no value given)"
+    elif not is_ip_regex.match(in_ip):
+        return "(not an ip)"
+
+    try:
+        result = socket.gethostbyaddr(in_ip)
+        return result[0]
+    except:
+        return "(unavailable)"
+
 # TODO: add admin view to filter and see all users
