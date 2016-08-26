@@ -4,7 +4,20 @@
 
 {% block content %}
     <div>
-        <h3>SLM Browsing History</h3>
-        <p>This site allows you to view whitelisted websites that you've logged.</p>
+        <h3>VPN Browsing History</h3>
+        <p> This site allows you to view whitelisted websites visited across your devices. </p>
+
+        <h3>Status</h3>
+        {% if is_connected %}
+        <i>
+          You are currently connected.
+        </i>
+        {% else %}
+        <i>
+          Disconnected.
+        </i>
+
+        {% endif %}
+
     </div>
 {% endblock %}
