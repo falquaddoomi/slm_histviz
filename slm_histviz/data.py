@@ -47,10 +47,12 @@ class AccessLog(db.Model):
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
 
     hostname = db.Column(db.String)
+    sni = db.Column(db.String)
     protocol = db.Column(db.String)
+    length = db.Column(db.Integer)
 
     def __str__(self):
-        return "%s accessed %s (prot: %s) at %s" % (self.username, self.hostname, self.protocol, self.created_at)
+        return "%s accessed %s (prot: %s, SNI: %s, len: %d) at %s" % (self.username, self.hostname, self.protocol, self.sni, self.length, self.created_at)
 
     def __repr__(self):
         return "AccessLog for %s to %s" % (self.username, self.hostname)
