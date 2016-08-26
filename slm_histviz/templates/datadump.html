@@ -23,7 +23,11 @@
 
         <div style="margin: 20px;">
             {% for item in accesses %}
-            <div>{{ item }}</div>
+            <div>
+              {{ item.created_at | to_nyc_timezone | fancy_datetime }} >>>>>>>>>> {{ item.hostname }} ({{ item.protocol }})
+              <br>
+              <br>
+            </div>
             {% endfor %}
         </div>
     </div>

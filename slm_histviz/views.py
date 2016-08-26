@@ -4,6 +4,7 @@ import flask
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from flask import render_template, request
 from sqlalchemy import text, literal
+import pytz
 
 from slm_histviz import app
 from slm_histviz.data import db, ConnectLog, AccessLog, Session, User, HostServiceMapping
@@ -116,3 +117,16 @@ def timeline():
     }
 
     return render_template('timeline.html', **ctx)
+
+
+@app.template_filter('to_nyc_timezone')
+def _jinja2_filter_nyctime(date, fmt=None):
+    return pytz.utc.localize(date).astimezone(pytz.timezone('America/New_York'))
+
+
+@app.template_filter('fancy_datetime')
+def _jinja2_strformat_datetime(date, fmt=None):
+    return date.strftime('%Y/%m/%d, %-I:%M %p (%Z)')
+
+# TODO: track how much time is spent on Facebook as starting point for other sites
+# TODO: add admin view to filter and see all users
