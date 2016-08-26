@@ -1,6 +1,8 @@
+""" views.py """
+
 import flask
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from flask import render_template, redirect, url_for, request
+from flask import render_template, request
 from sqlalchemy import text, literal
 
 from slm_histviz import app
@@ -10,10 +12,20 @@ from slm_histviz.forms import LoginForm
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html')
+    """ index page """
+
+    row = ConnectLog.query.filter(
+        ConnectLog.username ==
+        current_user.username).order_by(ConnectLog.created_at.desc()).limit(1)
+
+    ctx = {'is_connected': row[0].status == 'connected'}
+
+    return flask.render_template('index.html', **ctx)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """ login page """
     # Here we use a class of some kind to represent and validate our
     # client-side form data. For example, WTForms is a library that will
     # handle this for us, and we use a custom LoginForm to validate.
@@ -45,6 +57,7 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    """ logout user """
     logout_user()
     return flask.render_template('logout.html')
 
@@ -52,9 +65,14 @@ def logout():
 @app.route('/datadump')
 @login_required
 def datadump():
+    """ dump all data on page """
     ctx = {
-        'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
-        'accesses': AccessLog.query.filter(AccessLog.username == current_user.username).order_by(AccessLog.created_at.desc()).limit(25),
+        'connections': ConnectLog.query.filter(
+            ConnectLog.username ==
+            current_user.username).order_by(ConnectLog.created_at.desc()).limit(10),
+        'accesses': AccessLog.query.filter(
+            AccessLog.username ==
+            current_user.username).order_by(AccessLog.created_at.desc()).limit(25),
     }
 
     return render_template('datadump.html', **ctx)
@@ -64,7 +82,8 @@ def datadump():
 def my_utility_processor():
 
     def resolve_hostname(hostname):
-        service = HostServiceMapping.query.filter(literal(hostname).like(HostServiceMapping.pattern)).first()
+        service = HostServiceMapping.query.filter(
+            literal(hostname).like(HostServiceMapping.pattern)).first()
         return service.service if service is not None else '<%s>' % hostname
 
     return dict(resolve_hostname=resolve_hostname)
@@ -73,21 +92,22 @@ def my_utility_processor():
 @app.route('/timeline')
 @login_required
 def timeline():
+    """ show timeline of data """
     ctx = {
-        'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
+        # 'connections': ConnectLog.query.filter(ConnectLog.username == current_user.username),
         'sessions': Session.query.filter(Session.username == current_user.username),
-        'rolled_access': db.engine.execute(text(
-            """select username, hostname, protocol, min(created_at) as started_at, max(created_at) as ended_at, count(*) as hits
-            from access_log where username=:name GROUP BY username, hostname, protocol, date_trunc('second', created_at);"""
-        ).params(name=current_user.username)),
+        # 'rolled_access': db.engine.execute(text(
+        #     """select username, hostname, protocol, min(created_at) as started_at, max(created_at) as ended_at, count(*) as hits
+        #     from access_log where username=:name GROUP BY username, hostname, protocol, date_trunc('second', created_at);"""
+        # ).params(name=current_user.username)),
         'accesses': (
             AccessLog.query
                 # .filter(AccessLog.hostname.notilike("%1e100.net"))
                 .filter(AccessLog.username == current_user.username)
                 .filter(
-                    AccessLog.hostname.ilike("%facebook%") |
-                    AccessLog.hostname.ilike("%twitter%") |
-                    AccessLog.hostname.ilike("%instagram%")
+                    AccessLog.hostname.ilike("%facebook%")
+                    # AccessLog.hostname.ilike("%twitter%") |
+                    # AccessLog.hostname.ilike("%instagram%")
                 )
                 # .filter(AccessLog.hostname.notilike("%amazonaws.com"))
                 .order_by(AccessLog.created_at.desc())
