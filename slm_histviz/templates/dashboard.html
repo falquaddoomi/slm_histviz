@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block includes %}
+    <script src="{{ url_for('static', filename='js/d3pie.js') }}" language="JavaScript"></script>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+    $(window).load(function() {
+
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="timeline-summary-row">
+        <div class="points-timeline">
+            <!-- this is some kind of visualization of accesses to different services over time -->
+        </div>
+        <div class="region-summary">
+            <!-- this is a viz, possibly pie chart, that shows the proportion of services accessed (optionally including downtime) -->
+        </div>
+    </div>
+
+    <div class="region-details">
+        <!-- this is a large table of every access in the selected region and its details -->
+    </div>
+{% endblock %}
