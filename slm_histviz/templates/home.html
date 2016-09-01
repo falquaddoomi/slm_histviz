@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}Data Dump{% endblock %}
+
+{% block content %}
+    <div>
+        <h3>VPN Browsing History</h3>
+        <p> This site allows you to view whitelisted websites visited across your devices. </p>
+
+        <h3>Status</h3>
+        {% if current_user.is_authenticated %}
+            <i>{% if is_connected %}You are currently connected.{% else %}You are disconnected.{% endif %}</i>
+        {% else %}
+            You must <a href="{{ url_for('login') }}">log in</a> to view your status.
+        {% endif %}
+    </div>
+{% endblock %}
