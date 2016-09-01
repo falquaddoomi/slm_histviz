@@ -11,5 +11,6 @@ app.config.from_object('slm_histviz.config')
 
 import slm_histviz.tasks
 import slm_histviz.auth
+import slm_histviz.filters
 import slm_histviz.views
 import slm_histviz.api
