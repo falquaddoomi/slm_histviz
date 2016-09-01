@@ -14,6 +14,7 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
 futures==3.0.5
+gunicorn==19.6.0
 inflect==0.2.5
 ipython==4.2.0
 ipython-genutils==0.1.0
@@ -28,6 +29,7 @@ pexpect==4.0.1
 pickleshare==0.7.2
 psycopg2==2.6.1
 ptyprocess==0.5.1
+py==1.4.31
 python-dateutil==2.5.2
 python-editor==1.0
 python-mimeparse==1.5.1
