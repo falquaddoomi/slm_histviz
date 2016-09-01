@@ -1,6 +1,8 @@
 #!/bin/bash
 
-read STATUS IFACE TERM_ID SPEED OUR_IP LOCAL_CLIENT_IP REMOTE_CLIENT_IP <<<$( echo "$@")
+read STATUS IFACE TERM_ID SPEED LOCAL_CLIENT_IP REMOTE_CLIENT_IP <<<$( echo "$@")
+
+PG_ARGS="-U ec2-user -h pgdb -d slm_distraction"
 
 if [[ ${IFACE} == ppp* ]]; then
   if [[ ${STATUS} == "connected" ]]; then
@@ -9,37 +11,13 @@ if [[ ${IFACE} == ppp* ]]; then
     LOGIN_USER=$( last | grep ${IFACE} | head -n 1 | cut -d " " -f 1 )
   fi
 
-  echo "User ${LOGIN_USER} ${STATUS} on ${IFACE} :: remote IP ${REMOTE_CLIENT_IP}, local IP ${LOCAL_CLIENT_IP}!" >> /var/log/interfaces.txt
+  echo "User ${LOGIN_USER} ${STATUS} on ${IFACE} :: remote IP ${REMOTE_CLIENT_IP}, local IP ${LOCAL_CLIENT_IP}! ($( date ))" >> /var/log/interfaces.txt
 
   if [[ ${STATUS} == "connected" ]]; then
-    echo -e "connected\t${IFACE}\t${LOGIN_USER}\t${LOCAL_CLIENT_IP}\t${REMOTE_CLIENT_IP}" | \
-        psql -d slm_distraction -c "\copy connect_log (status, interface, username, local_ip, remote_ip) from stdin"
-
-    while read REMOTE_HOST PROTOCOL; do
-      echo -e "${LOGIN_USER}\t${REMOTE_HOST}\t${PROTOCOL}" | \
-        psql -d slm_distraction -c "\copy access_log (username, hostname, protocol) from stdin"
-    done < <( tcpdump -i ${IFACE} 'tcp port 443 or tcp port 80' | sed -n -E "s/.* ([^ ]+)\.(https|http).*/\1 \2/p" )
-
-    # ^ removed "and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)" which filters for only data packets
-    # switched from egrep -o "[^ ]+(https|http)" to sed
-
-    # ^ grab packets that contain data (no SYN or FIN) on the HTTP/S ports
-
+    echo "connected!"
+    /root/scripts/packets.py ${IFACE} ${LOGIN_USER} ${LOCAL_CLIENT_IP} ${REMOTE_CLIENT_IP} >> /var/log/packetlog.txt 2>&1
   elif [[ ${STATUS} == "disconnected" ]]; then
-    # and close out when we're done
-    # FIXME: trying it out in the down branch
-    echo -e "disconnected\t${IFACE}\t${LOGIN_USER}\t${LOCAL_CLIENT_IP}\t${REMOTE_CLIENT_IP}" | \
-      psql -d slm_distraction -c "\copy connect_log (status, interface, username, local_ip, remote_ip) from stdin"
+    echo "disconnected!"
+    # this is now handled in the python script as a single session
   fi
 fi
-
-# connected\tppp0\tfaisal\t192.168.0.100\t128.84.126.57
-
-# tcpdump sample output:
-# 19:02:11.585071 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [P.], seq 1:160, ack 583, win 60, options [nop,nop,TS val 2320325808 ecr 12434349], length 159
-# 19:02:11.613290 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [.], ack 160, win 643, options [nop,nop,TS val 12434352 ecr 2320325808], length 0
-# 19:02:11.615024 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [P.], seq 583:634, ack 160, win 643, options [nop,nop,TS val 12434352 ecr 2320325808], length 51
-# 19:02:11.616546 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [P.], seq 160:233, ack 634, win 60, options [nop,nop,TS val 2320325840 ecr 12434352], length 73
-# 19:02:11.618235 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [.], seq 634:1974, ack 160, win 643, options [nop,nop,TS val 12434353 ecr 2320325808], length 1340
-# 19:02:11.618693 IP ip-192-168-0-100.ec2.internal.52192 > edge-star-shv-01-iad3.facebook.com.https: Flags [P.], seq 1974:2109, ack 160, win 643, options [nop,nop,TS val 12434353 ecr 2320325808], length 135
-# 19:02:11.620114 IP edge-star-shv-01-iad3.facebook.com.https > ip-192-168-0-100.ec2.internal.52192: Flags [.], ack 2109, win 81, options [nop,nop,TS val 2320325843 ecr 12434353], length 0

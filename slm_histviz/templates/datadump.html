@@ -13,6 +13,9 @@
         <div style="margin: 20px;">
             {% for item in connections %}
             <div>{{ item }}</div>
+            {% if item.status == 'connected' %}
+            <p> ***************************************** </p>
+            {% endif %}
             {% endfor %}
         </div>
 
@@ -20,6 +23,18 @@
 
         <div style="margin: 20px;">
             {% for item in accesses %}
+            <div>
+              {{ item.created_at | to_nyc_timezone | fancy_datetime }} >>>>>>>>>> {{ item.hostname }} ({{ item.protocol }})
+              <br>
+              <br>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3>Sessions for <b>{{ current_user.username }}</b>:</h3>
+
+        <div style="margin: 20px;">
+            {% for item in sessions %}
             <div>{{ item }}</div>
             {% endfor %}
         </div>
