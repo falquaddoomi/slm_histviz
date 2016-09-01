@@ -15,15 +15,9 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    {% for ni in ['index', 'timeline', 'datadump'] %}
-                    <li {%- if request.path == url_for(ni) %} class="active"{% endif %}>
-                      <a href="{{ url_for(ni) }}">
-                        {% if ni == 'index' %}
-                        {{ 'Home' }}
-                        {% else %}
-                        {{ ni | capitalize }}
-                        {% endif %}
-                      </a>
+                    {% for ni in ['home', 'timeline', 'datadump'] %}
+                    <li {% if request.path == url_for(ni) %} class="active"{% endif %}>
+                      <a href="{{ url_for(ni) }}"> {{ ni | capitalize }} </a>
                     </li>
                     {% endfor %}
                 </ul>

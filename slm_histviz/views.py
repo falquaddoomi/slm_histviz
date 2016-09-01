@@ -14,16 +14,20 @@ from slm_histviz.forms import LoginForm
 
 
 @app.route('/')
-def index():
+def home():
     """ index page """
+    ctx = {}
 
-    row = ConnectLog.query.filter(
-        ConnectLog.username ==
-        current_user.username).order_by(ConnectLog.created_at.desc()).limit(1)
+    if current_user and current_user.is_authenticated:
+        last_connect = (
+            ConnectLog.query
+                .filter(ConnectLog.username == current_user.username)
+                .order_by(ConnectLog.created_at.desc())
+                .first()
+        )
+        ctx.update({'is_connected': last_connect and last_connect.status == 'connected'})
 
-    ctx = {'is_connected': row[0].status == 'connected'}
-
-    return flask.render_template('index.html', **ctx)
+    return flask.render_template('home.html', **ctx)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -53,7 +57,7 @@ def login():
         # if not next_is_valid(next):
         #     return flask.abort(400)
 
-        return flask.redirect(next or flask.url_for('index'))
+        return flask.redirect(next or flask.url_for('home'))
     return flask.render_template('login.html', form=form)
 
 
