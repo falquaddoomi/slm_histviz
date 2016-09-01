@@ -14,17 +14,50 @@
     </script>
 {% endblock %}
 
-{% block content %}
-    <div class="timeline-summary-row">
-        <div class="points-timeline">
-            <!-- this is some kind of visualization of accesses to different services over time -->
-        </div>
-        <div class="region-summary">
-            <!-- this is a viz, possibly pie chart, that shows the proportion of services accessed (optionally including downtime) -->
-        </div>
-    </div>
 
-    <div class="region-details">
-        <!-- this is a large table of every access in the selected region and its details -->
+{% block style %}
+    <style>
+    .dash {
+        display: flex;
+        flex-direction: column;
+    }
+    .dash .dash-panel {
+        margin: 10px;
+        padding: 10px;
+        background: #ccc;
+    }
+    .timeline-summary-row {
+        display: flex;
+        flex: 0 0 300px;
+    }
+    .points-timeline {
+        flex: 1 1;
+    }
+    .interval-summary {
+        flex: 0 0 300px;
+    }
+    .interval-details {
+        flex: 1 1;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="dash">
+        <div class="timeline-summary-row">
+            <div class="dash-panel points-timeline">
+                <!-- this is some kind of visualization of accesses to different services over time -->
+                timeline
+            </div>
+            <div class="dash-panel interval-summary">
+                <!-- this is a viz, possibly pie chart, that shows the proportion of services accessed (optionally including downtime) -->
+                aggregate summary
+            </div>
+        </div>
+
+        <div class="dash-panel interval-details">
+            <!-- this is a large table of every access in the selected region and its details -->
+            access log
+        </div>
     </div>
 {% endblock %}

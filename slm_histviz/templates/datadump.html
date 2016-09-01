@@ -47,9 +47,35 @@
         <h3>Sessions for <b>{{ current_user.username }}</b>:</h3>
 
         <div style="margin: 20px;">
-            {% for item in sessions %}
-            <div>{{ item }}</div>
-            {% endfor %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Started on</th>
+                        <th>Ended on</th>
+                        <th>Interface</th>
+                        <th>Local IP</th>
+                        <th>Remote IP</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for item in sessions %}
+                    <tr>
+                        <td>{{ item.started_at | to_nyc_timezone | fancy_datetime }}</td>
+                        <td>{{ item.ended_at | to_nyc_timezone | fancy_datetime }}</td>
+                        <td>{{ item.interface }}</td>
+                        <td>{{ item.local_ip }}</td>
+                        <td>{{ item.remote_ip }}</td>
+                        <td>
+                            {% with dur = item.duration() %}
+                                {% if dur %}{{ dur }}{% else %}<i>instantaneous</i>{% endif %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

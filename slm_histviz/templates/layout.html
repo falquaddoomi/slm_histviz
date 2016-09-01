@@ -15,7 +15,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    {% for ni in ['home', 'timeline', 'datadump'] %}
+                    {% for ni in ['home', 'dashboard', 'timeline', 'datadump'] %}
                     <li {% if request.path == url_for(ni) %} class="active"{% endif %}>
                       <a href="{{ url_for(ni) }}"> {{ ni | capitalize }} </a>
                     </li>
