@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from slm_histviz import app
 
 from flask_sqlalchemy import SQLAlchemy
@@ -24,6 +26,18 @@ class User(db.Model, flask_login.UserMixin):
 
     def get_urole(self):
         return unicode(self.role)
+
+    def is_connected(self):
+        """
+        Indicates whether the user has at least one non-disconnected connection.
+        :return: true if we're connected, false otherwise
+        """
+
+        base = ConnectLog.query.filter(ConnectLog.username == self.username)
+        connections = base.filter(ConnectLog.status == 'connected')
+        disconnections = base.filter(ConnectLog.status == 'disconnected')
+
+        return (connections.count() - disconnections.count()) > 0
 
     def __init__(self, username, password=None):
         self.username = username
