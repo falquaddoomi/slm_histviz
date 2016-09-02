@@ -21,6 +21,11 @@
         <!-- site-specific CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 
+        <!-- local compiled js -->
+        {% assets "js_all" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+
         {% block includes %}{% endblock %}
 
         {% block style %}{% endblock %}

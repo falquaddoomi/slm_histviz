@@ -4,7 +4,7 @@ from flask import current_app
 from flask.ext.login import current_user
 
 from slm_histviz import app
-from slm_histviz.data import User
+from slm_histviz.models import User
 from flask.ext import login as flask_login
 
 login_manager = flask_login.LoginManager()

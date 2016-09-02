@@ -8,4 +8,5 @@ Thumbs.db
 *.log
 .env
 /slm_histviz/config.py
-/slm_histviz/bower_components/
+/slm_histviz/static/bower_components/
+/slm_histviz/gen/

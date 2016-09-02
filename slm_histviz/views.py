@@ -4,7 +4,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from sqlalchemy import literal
 
 from slm_histviz import app
-from slm_histviz.data import ConnectLog, AccessLog, Session, User, HostServiceMapping
+from slm_histviz.models import ConnectLog, AccessLog, Session, User, HostServiceMapping
 from slm_histviz.forms import LoginForm
 
 @app.route('/')

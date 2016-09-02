@@ -1,5 +1,5 @@
 import flask.ext.restless
-from slm_histviz.data import db, AccessLog, ConnectLog
+from slm_histviz.models import db, AccessLog, ConnectLog
 
 from slm_histviz import app
 

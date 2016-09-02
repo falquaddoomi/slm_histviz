@@ -4,7 +4,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
 from slm_histviz import app
-from slm_histviz.data import db
+from slm_histviz.models import db
 
 migrate = Migrate(app, db)
 manager = Manager(app)

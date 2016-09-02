@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired
 
-from slm_histviz.data import User
+from slm_histviz.models import User
 
 
 class LoginForm(Form):

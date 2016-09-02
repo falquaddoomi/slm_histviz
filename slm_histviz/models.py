@@ -9,8 +9,8 @@ from sqlalchemy.dialects.postgresql.base import INET
 import datetime
 import dateutil.relativedelta
 
-
 db = SQLAlchemy(app)
+
 
 class User(db.Model, flask_login.UserMixin):
     username = db.Column(db.String, primary_key=True)
