@@ -1,0 +1,19 @@
+{
+  "name": "slm_histviz",
+  "description": "browsing history visualization site",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3-timeline": "^0.0.5",
+    "d3pie": "^0.1.9"
+  }
+}

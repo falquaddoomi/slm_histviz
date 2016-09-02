@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 app.config.from_object('slm_histviz.config')
 
-# Bower(app)
+Bower(app)
 
 import slm_histviz.tasks
 import slm_histviz.auth
