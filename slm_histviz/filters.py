@@ -12,7 +12,7 @@ def _jinja2_filter_nyctime(date, fmt=None):
 
 @app.template_filter('fancy_datetime')
 def _jinja2_strformat_datetime(date, fmt=None):
-    return date.strftime('%Y/%m/%d, %-I:%M %p (%Z)')
+    return date.strftime('%Y/%m/%d, %I:%M %p (%Z)')
 
 
 is_ip_regex = re.compile(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$")
