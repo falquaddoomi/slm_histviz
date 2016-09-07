@@ -3,7 +3,7 @@
  */
 
 function hello() {
-    console.log("this is a test of the emergency packing system");
+    console.log("this is a test of the emergency dddd system");
 
     return (d) => {
         console.log(d);
