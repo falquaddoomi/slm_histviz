@@ -1,6 +1,6 @@
 import flask
 from flask import render_template
-from flask.ext.login import current_user, login_required, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import literal
 
 from slm_histviz import app

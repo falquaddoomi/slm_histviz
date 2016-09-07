@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import current_app
-from flask.ext.login import current_user
+from flask_login import current_user
 
 from slm_histviz import app
 from slm_histviz.models import User
