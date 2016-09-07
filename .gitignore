@@ -7,6 +7,7 @@ Thumbs.db
 *.db
 *.log
 .env
+/node_modules
 /slm_histviz/config.py
 /slm_histviz/static/bower_components/
 /slm_histviz/gen/

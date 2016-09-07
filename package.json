@@ -1,0 +1,24 @@
+{
+  "name": "slm_histviz",
+  "version": "1.0.0",
+  "description": "SLM Distraction Tracker ===",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falquaddoomi/slm_histviz.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/falquaddoomi/slm_histviz/issues"
+  },
+  "homepage": "https://github.com/falquaddoomi/slm_histviz#readme"
+}
