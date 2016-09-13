@@ -10,7 +10,7 @@ app.config.from_object('slm_histviz.config')
 # Bower(app)
 
 # preprocesses assets (js, css, etc.) to produce combined/processed includes
-import  slm_histviz.asset_processors
+import  slm_histviz.assets_pipeline
 
 import slm_histviz.tasks
 import slm_histviz.auth

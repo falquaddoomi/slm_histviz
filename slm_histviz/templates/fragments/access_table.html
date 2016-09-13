@@ -1,0 +1,23 @@
+<div style="margin: 20px;">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Hostname</th>
+                <th>Server Name Indicator</th>
+                <th>Protocol</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for item in accesses %}
+            <tr>
+                <td>{{ item.created_at | to_nyc_timezone | fancy_datetime }}</td>
+                <td>{{ item.hostname }}</td>
+                <td>{{ item.sni }}</td>
+                <td>{{ item.protocol }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

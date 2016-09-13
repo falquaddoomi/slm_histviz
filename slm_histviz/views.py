@@ -66,7 +66,16 @@ def timeline():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    ctx = {}
+    ctx = {
+        'connections': ConnectLog.query.filter(
+            ConnectLog.username ==
+            current_user.username).order_by(ConnectLog.created_at.desc()).limit(100),
+        'accesses': AccessLog.query.filter(
+            AccessLog.username ==
+            current_user.username).order_by(AccessLog.created_at.desc()).limit(100),
+        'sessions': Session.query.filter(Session.username == current_user.username),
+    }
+
     return render_template('dashboard.html', **ctx)
 
 

@@ -5,17 +5,11 @@
 {% block script %}
     <script type="text/javascript">
     $(document).ready(function() {
-        var labelTestData = [
-            {label: "person a", times: [{"starting_time": 1355752800000, "ending_time": 1355759900000}, {"starting_time": 1355767900000, "ending_time": 1355774400000}]},
-            {label: "person b", times: [{"starting_time": 1355759910000, "ending_time": 1355761900000}]},
-            {label: "person c", times: [{"starting_time": 1355761910000, "ending_time": 1355763910000}]}
-        ];
+        makeDashboard();
 
-        var chart = d3.timeline().stack().showToday().labelFormat(function(label){ return label;});
-        var svg = d3.select("#timeline")
-            .append("svg")
-            .attr("width", $("#timeline").parent().width())
-            .datum(labelTestData).call(chart);
+        $('#timeline-datepicker').datepicker({
+            /* datepicker options here */
+        });
     });
     </script>
 {% endblock %}
@@ -30,22 +24,26 @@
     .dash .dash-panel {
         margin: 10px;
         padding: 10px;
-        background: #ccc;
+        {# background: #ccc; #}
     }
     .timeline-summary-row {
         display: flex;
-        flex: 0 0 300px;
+        flex: 0 0 350px;
     }
     .points-timeline {
         flex: 1 1;
+        align-self: flex-end;
     }
     .interval-summary {
-        flex: 0 0 300px;
+        flex: 0 0 350px;
+        align-self: center;
+        text-align: center;
     }
     .interval-details {
         flex: 1 1;
     }
 
+    /* d3timeline styles */
     .axis path,
     .axis line {
       fill: none;
@@ -75,6 +73,10 @@
 {% endblock %}
 
 {% block content %}
+    <div class="date-selector">
+        <!-- we'd select a date here somehow -->
+        <input type="text" id="timeline-datepicker" />
+    </div>
     <div class="dash">
         <div class="timeline-summary-row">
             <div class="dash-panel points-timeline">
@@ -83,13 +85,13 @@
             </div>
             <div class="dash-panel interval-summary">
                 <!-- this is a viz, possibly pie chart, that shows the proportion of services accessed (optionally including downtime) -->
-                aggregate summary
+                <div id="time_usage_chart"></div>
             </div>
         </div>
 
         <div class="dash-panel interval-details">
             <!-- this is a large table of every access in the selected region and its details -->
-            access log
+            {% include 'fragments/access_table.html' %}
         </div>
     </div>
 {% endblock %}
