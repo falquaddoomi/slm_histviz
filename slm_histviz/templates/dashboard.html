@@ -7,9 +7,16 @@
     $(document).ready(function() {
         makeDashboard();
 
-        $('#timeline-datepicker').datepicker({
+        var $dpick = $('#timeline-datepicker');
+
+        $dpick.datepicker({
             /* datepicker options here */
+        })
+        .on('changeDate', function(e) {
+            // bind up the controls on the page
         });
+
+        $dpick.datepicker('setDate', new Date());
     });
     </script>
 {% endblock %}
@@ -17,6 +24,14 @@
 
 {% block style %}
     <style>
+    .date-selector {
+        border-bottom: dotted 1px #ccc;
+        padding: 5px;
+        padding-bottom: 10px;
+    }
+    .date-selector label {
+        font-weight: bold;
+    }
     .dash {
         display: flex;
         flex-direction: column;
@@ -75,8 +90,11 @@
 {% block content %}
     <div class="date-selector">
         <!-- we'd select a date here somehow -->
-        <input type="text" id="timeline-datepicker" />
+        <label for="timeline-datepicker">show data for this date:</label> <input type="text" id="timeline-datepicker" />
     </div>
+
+    <div id="dash-root"></div>
+
     <div class="dash">
         <div class="timeline-summary-row">
             <div class="dash-panel points-timeline">

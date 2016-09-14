@@ -56,7 +56,7 @@ class AccessLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String, db.ForeignKey('user.username'))
-    # user = db.relationship('User', backref=db.backref('accesses', lazy='dynamic'))
+    user = db.relationship('User')
 
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
 
@@ -82,7 +82,7 @@ class ConnectLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String, db.ForeignKey('user.username'))
-    # user = db.relationship('User', backref=db.backref('connects', lazy='dynamic'))
+    user = db.relationship('User')
 
     created_at = db.Column(db.DateTime, server_default=text("timezone('utc'::text, now())"))
 

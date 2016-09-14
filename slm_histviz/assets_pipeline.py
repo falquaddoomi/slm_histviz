@@ -7,9 +7,9 @@ from webassets.filter import get_filter, register_filter
 from webassets_react import React
 register_filter(React)
 
-app.config.update(
-    BABEL_BIN='./node_modules/.bin/babel'
-)
+# app.config.update(
+#     BABEL_BIN='./node_modules/.bin/babel'
+# )
 
 assets = Environment(app)
 assets.manifest = None
@@ -27,15 +27,17 @@ bower_js_paths = [
     "bower_components/d3/d3.min.js",
     "bower_components/d3-timeline/src/d3-timeline.js",
     "bower_components/d3pie/d3pie/d3pie.min.js",
-    "bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"
+    "bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",
+    "bower_components/react/react.js",
+    "bower_components/react/react-dom.js"
 ]
 
 # combine into a single thing and register
 assets.register('js_all', Bundle(
     Bundle(*bower_js_paths),
     Bundle('js/*.js', filters=[babel]),
-    Bundle('jsx/*.jsx', filters='react'),
-    output='gen/packed.js', filters='jsmin'
+    Bundle('jsx/*.jsx', filters=['react']),
+    output='gen/packed.js' #, filters='jsmin'
 ))
 
 # make a css include as well, just for kicks
