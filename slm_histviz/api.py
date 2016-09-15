@@ -3,15 +3,29 @@ import flask
 import flask_restless
 from flask import request
 from flask_login import login_required, current_user
+from sqlalchemy import func
+from sqlalchemy.sql.functions import count
+
 from slm_histviz.models import db, AccessLog, ConnectLog
 
 from slm_histviz import app
+
 
 # =====================================================================================================================
 # === general api configuration
 # =====================================================================================================================
 
 # Create the Flask-Restless API manager.
+
+manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
+
+manager.create_api(AccessLog, max_results_per_page=None, results_per_page=None, methods=['GET'])
+manager.create_api(ConnectLog, max_results_per_page=None, results_per_page=None, methods=['GET'])
+
+
+# =====================================================================================================================
+# === other API-related junk goes down here
+# =====================================================================================================================
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -28,18 +42,15 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     response = flask.jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
 
-manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
 
-manager.create_api(AccessLog, results_per_page=1000, methods=['GET'])
-manager.create_api(ConnectLog, results_per_page=1000, methods=['GET'])
-
-@app.route('/dashboard/accesses')
+@app.route('/api/accesses')
 @login_required
 def access_sessions():
     try:
@@ -56,3 +67,15 @@ def access_sessions():
     # 3) a list of accesses
 
     return flask.jsonify(data=accesses.all())
+
+
+@app.route('/api/data_dates')
+@login_required
+def api_data_dates():
+    dates = (
+        db.session.query(func.date_trunc('day', AccessLog.created_at).label('date'), count(AccessLog.id).label('accesses'))
+            .filter(AccessLog.user == current_user)
+            .group_by('date').order_by('date').all()
+    )
+
+    return flask.jsonify(dates=[(date.isoformat(), cnt) for date, cnt in dates])

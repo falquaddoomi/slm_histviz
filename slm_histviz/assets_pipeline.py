@@ -28,15 +28,16 @@ bower_js_paths = [
     "bower_components/d3-timeline/src/d3-timeline.js",
     "bower_components/d3pie/d3pie/d3pie.min.js",
     "bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",
-    "bower_components/react/react.js",
-    "bower_components/react/react-dom.js"
+    "bower_components/moment/min/moment-with-locales.min.js"
+    # "bower_components/react/react.js",
+    # "bower_components/react/react-dom.js"
 ]
 
 # combine into a single thing and register
 assets.register('js_all', Bundle(
     Bundle(*bower_js_paths),
     Bundle('js/*.js', filters=[babel]),
-    Bundle('jsx/*.jsx', filters=['react']),
+    # Bundle('jsx/*.jsx', filters=['react']), # FA: omitting react files for now
     output='gen/packed.js' #, filters='jsmin'
 ))
 

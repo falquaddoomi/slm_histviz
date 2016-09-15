@@ -1,18 +1,16 @@
-from sqlalchemy import func
+from flask_login import login_required, current_user, UserMixin
 
 from slm_histviz import app
 
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext import login as flask_login
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql.base import INET
-import datetime
 import dateutil.relativedelta
 
 db = SQLAlchemy(app)
 
 
-class User(db.Model, flask_login.UserMixin):
+class User(db.Model, UserMixin):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     authenticated = db.Column(db.Boolean, default=False)
@@ -64,6 +62,12 @@ class AccessLog(db.Model):
     sni = db.Column(db.String)
     protocol = db.Column(db.String)
     length = db.Column(db.Integer)
+
+    @classmethod
+    @login_required
+    def query(cls):
+        q = db.session.query(cls).filter(cls.user == current_user)
+        return q
 
     def __str__(self):
         return "%s accessed %s (prot: %s, SNI: %s, len: %d) at %s" % (self.username, self.hostname, self.protocol, self.sni, self.length, self.created_at)

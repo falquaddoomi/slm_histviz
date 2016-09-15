@@ -70,7 +70,7 @@ def dashboard():
         'connections': ConnectLog.query.filter(
             ConnectLog.username ==
             current_user.username).order_by(ConnectLog.created_at.desc()).limit(100),
-        'accesses': AccessLog.query.filter(
+        'accesses': AccessLog.query().filter(
             AccessLog.username ==
             current_user.username).order_by(AccessLog.created_at.desc()).limit(100),
         'sessions': Session.query.filter(Session.username == current_user.username),
