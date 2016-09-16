@@ -28,9 +28,11 @@ bower_js_paths = [
     "bower_components/d3-timeline/src/d3-timeline.js",
     "bower_components/d3pie/d3pie/d3pie.min.js",
     "bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",
-    "bower_components/moment/min/moment-with-locales.min.js"
+    "bower_components/moment/min/moment-with-locales.min.js",
     # "bower_components/react/react.js",
     # "bower_components/react/react-dom.js"
+    "bower_components/datatables.net/js/jquery.dataTables.min.js", # order matters here
+    "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js",
 ]
 
 # combine into a single thing and register
@@ -41,9 +43,11 @@ assets.register('js_all', Bundle(
     output='gen/packed.js' #, filters='jsmin'
 ))
 
+
 # make a css include as well, just for kicks
 bower_css_paths = [
-    "bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"
+    "bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
+    "bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css",
 ]
 
 assets.register('css_all', Bundle(

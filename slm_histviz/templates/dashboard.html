@@ -16,14 +16,23 @@
     .datepicker-days .has-data {
         background-color: yellow;
     }
-    .date-selector {
+
+    #date-selector {
         border-bottom: dotted 1px #ccc;
         padding: 5px;
         padding-bottom: 10px;
+        display: flex;
     }
-    .date-selector label {
+    #date-selector label {
         font-weight: bold;
     }
+    #date-selector .date-choice {
+        flex: 1 1;
+    }
+    #date-selector .date-choice .selected {
+        font-weight: bold;
+    }
+
     .dash {
         display: flex;
         flex-direction: column;
@@ -36,10 +45,15 @@
     .timeline-summary-row {
         display: flex;
         flex: 0 0 350px;
+
+        border-bottom: dotted 1px #ccc;
+        padding: 5px;
+        padding-bottom: 10px;
     }
     .points-timeline {
         flex: 1 1;
         align-self: flex-end;
+        justify-content: flex-end;
     }
     .interval-summary {
         flex: 0 0 350px;
@@ -51,6 +65,9 @@
     }
 
     /* d3timeline styles */
+    #timeline svg {
+        overflow: visible;
+    }
     .axis path, .axis line {
       fill: none;
       stroke: black;
@@ -63,6 +80,7 @@
     .timeline-label {
       font-family: sans-serif;
       font-size: 12px;
+      margin-left: -300px;
     }
     .coloredDiv {
       height:20px; width:20px; float:left;
@@ -75,9 +93,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="date-selector">
-        <!-- we'd select a date here somehow -->
-        <label for="timeline-datepicker">show data for this date:</label> <input type="text" id="timeline-datepicker" />
+    <div id="date-selector">
     </div>
 
     <div id="dash-root"></div>
