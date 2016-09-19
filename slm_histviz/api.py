@@ -19,7 +19,7 @@ from slm_histviz import app
 
 manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
 
-manager.create_api(AccessLog, max_results_per_page=None, results_per_page=None, methods=['GET'])
+manager.create_api(AccessLog, max_results_per_page=None, results_per_page=None, methods=['GET'], include_methods=['sni_or_reverse_ip'])
 manager.create_api(ConnectLog, max_results_per_page=None, results_per_page=None, methods=['GET'])
 
 

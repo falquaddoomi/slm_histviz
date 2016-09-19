@@ -9,10 +9,10 @@
 
 function groupByService(data) {
     return data.reduce((acc, cur) => {
-        if (acc.hasOwnProperty(cur.sni)) {
-            acc[cur.sni].push(cur);
+        if (acc.hasOwnProperty(cur.sni_or_reverse_ip)) {
+            acc[cur.sni_or_reverse_ip].push(cur);
         } else {
-            acc[cur.sni] = [cur];
+            acc[cur.sni_or_reverse_ip] = [cur];
         }
 
         return acc;

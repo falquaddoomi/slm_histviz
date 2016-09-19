@@ -7,6 +7,8 @@ from sqlalchemy import text
 from sqlalchemy.dialects.postgresql.base import INET
 import dateutil.relativedelta
 
+from slm_histviz.filters import lookup_ip
+
 db = SQLAlchemy(app)
 
 
@@ -74,6 +76,12 @@ class AccessLog(db.Model):
 
     def __repr__(self):
         return "AccessLog for %s to %s" % (self.username, self.hostname)
+
+    def sni_or_reverse_ip(self):
+        if self.sni == '<unknown>':
+            return lookup_ip(self.hostname)
+        else:
+            return self.sni
 
     def resolved_service(self):
         service = HostServiceMapping.query.filter(self.hostname.like(HostServiceMapping.pattern)).first()

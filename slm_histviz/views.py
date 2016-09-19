@@ -26,7 +26,7 @@ def datadump():
         'connections': ConnectLog.query.filter(
             ConnectLog.username ==
             current_user.username).order_by(ConnectLog.created_at.desc()).limit(100),
-        'accesses': AccessLog.query.filter(
+        'accesses': AccessLog.query().filter(
             AccessLog.username ==
             current_user.username).order_by(AccessLog.created_at.desc()).limit(100),
         'sessions': Session.query.filter(Session.username == current_user.username),
@@ -46,7 +46,7 @@ def timeline():
         #     from access_log where username=:name GROUP BY username, hostname, protocol, date_trunc('second', created_at);"""
         # ).params(name=current_user.username)),
         'accesses': (
-            AccessLog.query
+            AccessLog.query()
                 # .filter(AccessLog.hostname.notilike("%1e100.net"))
                 .filter(AccessLog.username == current_user.username)
                 .filter(

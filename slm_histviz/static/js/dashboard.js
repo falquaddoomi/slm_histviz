@@ -97,8 +97,13 @@ function makePie(target, data) {
             "pieOuterRadius": "100%"
         },
         "data": {
+            "smallSegmentGrouping": {
+                "enabled": true,
+                "value": 10,
+                "valueType": "value"
+            },
             "sortOrder": "value-desc",
-            "content": data
+            "content": data.slice(0,30)
         },
         "labels": {
             "outer": {
@@ -160,7 +165,7 @@ function bindComponentsToData(data) {
     var access_log_rows = data['objects'].map((row) => [
             moment.utc(row.created_at).local().format("ll, LTS"),
             row.hostname,
-            safe_tags_replace(row.sni),
+            safe_tags_replace((row.sni != '<unknown>')?row.sni:row.sni_or_reverse_ip + "*"),
             row.protocol
     ]);
 
@@ -182,24 +187,6 @@ function bindComponentsToData(data) {
         access_log_dtable.draw();
     }
 
-
-    /*
-    $("#access_table").find("tbody").empty().append(
-        data['objects'].reduce((acc, row) => {
-            var $tr = $("<tr />");
-
-            $("<td />").text(moment.utc(row.created_at).local().format("ll, LTS")).appendTo($tr);
-            $("<td />").text(row.hostname).appendTo($tr);
-            $("<td />").text(row.sni).appendTo($tr);
-            $("<td />").text(row.protocol).appendTo($tr);
-
-            acc.push($tr);
-
-            return acc;
-        }, [])
-    );
-    */
-
     // ------------------------------------------------------------------------------------------------
     // --- STEP 2. produce data for d3-timeline
     // ------------------------------------------------------------------------------------------------
@@ -209,7 +196,7 @@ function bindComponentsToData(data) {
     var interval_width = moment.duration(moment.utc(extents[1]).diff(moment.utc(extents[0])));
     // group by service and coalesce contiguous timepoints
     var access_by_service = groupByService(data['objects']);
-    access_by_service = intervalizeAccesses(access_by_service, 5, 'seconds');
+    access_by_service = intervalizeAccesses(access_by_service, 10, 'seconds');
 
     console.log(access_by_service);
 

@@ -1444,10 +1444,10 @@ l=0;for(h=f.length;l<h;l++)if(c=f[l],b.isArray(c))q(d,c);else{g=e="";switch(c){c
 
 function groupByService(data) {
     return data.reduce(function (acc, cur) {
-        if (acc.hasOwnProperty(cur.sni)) {
-            acc[cur.sni].push(cur);
+        if (acc.hasOwnProperty(cur.sni_or_reverse_ip)) {
+            acc[cur.sni_or_reverse_ip].push(cur);
         } else {
-            acc[cur.sni] = [cur];
+            acc[cur.sni_or_reverse_ip] = [cur];
         }
 
         return acc;
@@ -1637,8 +1637,13 @@ function makePie(target, data) {
             "pieOuterRadius": "100%"
         },
         "data": {
+            "smallSegmentGrouping": {
+                "enabled": true,
+                "value": 10,
+                "valueType": "value"
+            },
             "sortOrder": "value-desc",
-            "content": data
+            "content": data.slice(0, 30)
         },
         "labels": {
             "outer": {
@@ -1698,7 +1703,7 @@ function bindComponentsToData(data) {
 
     // create rows to bind to the datatable
     var access_log_rows = data['objects'].map(function (row) {
-        return [moment.utc(row.created_at).local().format("ll, LTS"), row.hostname, safe_tags_replace(row.sni), row.protocol];
+        return [moment.utc(row.created_at).local().format("ll, LTS"), row.hostname, safe_tags_replace(row.sni != '<unknown>' ? row.sni : row.sni_or_reverse_ip + "*"), row.protocol];
     });
 
     // create new datatable if it doesn't exist, or reuse it if it does
@@ -1713,20 +1718,6 @@ function bindComponentsToData(data) {
         access_log_dtable.draw();
     }
 
-    /*
-    $("#access_table").find("tbody").empty().append(
-        data['objects'].reduce((acc, row) => {
-            var $tr = $("<tr />");
-             $("<td />").text(moment.utc(row.created_at).local().format("ll, LTS")).appendTo($tr);
-            $("<td />").text(row.hostname).appendTo($tr);
-            $("<td />").text(row.sni).appendTo($tr);
-            $("<td />").text(row.protocol).appendTo($tr);
-             acc.push($tr);
-             return acc;
-        }, [])
-    );
-    */
-
     // ------------------------------------------------------------------------------------------------
     // --- STEP 2. produce data for d3-timeline
     // ------------------------------------------------------------------------------------------------
@@ -1738,7 +1729,7 @@ function bindComponentsToData(data) {
     var interval_width = moment.duration(moment.utc(extents[1]).diff(moment.utc(extents[0])));
     // group by service and coalesce contiguous timepoints
     var access_by_service = groupByService(data['objects']);
-    access_by_service = intervalizeAccesses(access_by_service, 5, 'seconds');
+    access_by_service = intervalizeAccesses(access_by_service, 10, 'seconds');
 
     console.log(access_by_service);
 
