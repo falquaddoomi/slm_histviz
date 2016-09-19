@@ -103,7 +103,7 @@ function makePie(target, data) {
                 "valueType": "value"
             },
             "sortOrder": "value-desc",
-            "content": data.slice(0,30)
+            "content": data
         },
         "labels": {
             "outer": {
