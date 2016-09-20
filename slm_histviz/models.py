@@ -78,7 +78,7 @@ class AccessLog(db.Model):
         return "AccessLog for %s to %s" % (self.username, self.hostname)
 
     def sni_or_reverse_ip(self):
-        if self.sni == '<unknown>':
+        if self.sni == '<unknown>' or self.sni == '<http-unknown>':
             return lookup_ip(self.hostname)
         else:
             return self.sni
