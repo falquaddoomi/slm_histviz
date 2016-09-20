@@ -1,0 +1,4 @@
+#!/bin/bash
+
+adb logcat -b events -c
+adb logcat -v threadtime -b events | egrep 'am_focused_activity|am_resume_activity|screen_toggled'
