@@ -1432,7 +1432,7 @@ _fnCallbackFire:u,_fnLengthOverflow:Sa,_fnRenderer:Na,_fnDataSource:y,_fnRowAttr
 l=0;for(h=f.length;l<h;l++)if(c=f[l],b.isArray(c))q(d,c);else{g=e="";switch(c){case "ellipsis":e="&#x2026;";g="disabled";break;case "first":e=k.sFirst;g=c+(0<j?"":" disabled");break;case "previous":e=k.sPrevious;g=c+(0<j?"":" disabled");break;case "next":e=k.sNext;g=c+(j<n-1?"":" disabled");break;case "last":e=k.sLast;g=c+(j<n-1?"":" disabled");break;default:e=c+1,g=j===c?"active":""}e&&(i=b("<li>",{"class":s.sPageButton+" "+g,id:0===r&&"string"===typeof c?a.sTableId+"_"+c:null}).append(b("<a>",{href:"#",
 "aria-controls":a.sTableId,"aria-label":t[c],"data-dt-idx":p,tabindex:a.iTabIndex}).html(e)).appendTo(d),a.oApi._fnBindAction(i,{action:c},m),p++)}},i;try{i=b(h).find(d.activeElement).data("dt-idx")}catch(u){}q(b(h).empty().html('<ul class="pagination"/>').children("ul"),m);i&&b(h).find("[data-dt-idx="+i+"]").focus()};return f});
 
-"use strict";
+'use strict';
 
 /**
  * Created by faisal on 9/16/16.
@@ -1442,12 +1442,32 @@ l=0;for(h=f.length;l<h;l++)if(c=f[l],b.isArray(c))q(d,c);else{g=e="";switch(c){c
 * helper functions for grouping raw access logs in various ways
  */
 
+var hn_service_map = {
+    'Facebook': [/facebook/],
+    'FB Messenger': [/graph\.facebook\.com/],
+    'Instagram': [/instagram/],
+    'Google': [/google/],
+    'Google Ping': [/1e100/],
+    'Pinterest': [/pinterest/],
+    'Snapchat': [/snapchat/]
+};
+
+function hostnameToService(hostname) {}
+
+/**
+ * Given an array of access logs, returns an object where each is grouped by the key
+ * @param data an array of elements with the specified key
+ * @param key the attribute of each element on which to group (default 'sni_or_reverse_ip')
+ * @returns {*}
+ */
 function groupByService(data) {
+    var key = arguments.length <= 1 || arguments[1] === undefined ? 'sni_or_reverse_ip' : arguments[1];
+
     return data.reduce(function (acc, cur) {
-        if (acc.hasOwnProperty(cur.sni_or_reverse_ip)) {
-            acc[cur.sni_or_reverse_ip].push(cur);
+        if (acc.hasOwnProperty(cur[key])) {
+            acc[cur[key]].push(cur);
         } else {
-            acc[cur.sni_or_reverse_ip] = [cur];
+            acc[cur[key]] = [cur];
         }
 
         return acc;
@@ -1682,7 +1702,7 @@ function makePie(target, data) {
         },
         "callbacks": {
             "onClickSegment": function onClickSegment(e) {
-                console.log(e);
+                // console.log(e);
                 pie.updateProp('header.title.text', forHumans(e.data.value));
                 pie.updateProp('header.subtitle.text', safe_tags_replace(e.data.label));
             }
@@ -1731,7 +1751,7 @@ function bindComponentsToData(data) {
     var access_by_service = groupByService(data['objects']);
     access_by_service = intervalizeAccesses(access_by_service, 10, 'seconds');
 
-    console.log(access_by_service);
+    // console.log(access_by_service);
 
     var $timeline = $("#timeline");
 
@@ -1825,7 +1845,7 @@ function getAccessBetweenDates(start_date, end_date) {
     var filters = { filters: [{ and: [{ name: "created_at", op: "gte", val: start_txt }, { name: "created_at", op: "lt", val: end_txt }] }] };
 
     return $.get("/api/access_log", { results_per_page: 10000, q: JSON.stringify(filters) }).fail(function () {
-        console.error("Couldn't get access log data!");
+        console.warn("Couldn't get access log data!");
     });
 }
 

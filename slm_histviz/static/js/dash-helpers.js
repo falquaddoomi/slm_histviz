@@ -7,12 +7,32 @@
 * helper functions for grouping raw access logs in various ways
  */
 
-function groupByService(data) {
+var hn_service_map = {
+    'Facebook': [/facebook/],
+    'FB Messenger': [/graph\.facebook\.com/],
+    'Instagram': [/instagram/],
+    'Google': [/google/],
+    'Google Ping': [/1e100/],
+    'Pinterest': [/pinterest/],
+    'Snapchat': [/snapchat/]
+};
+
+function hostnameToService(hostname) {
+
+}
+
+/**
+ * Given an array of access logs, returns an object where each is grouped by the key
+ * @param data an array of elements with the specified key
+ * @param key the attribute of each element on which to group (default 'sni_or_reverse_ip')
+ * @returns {*}
+ */
+function groupByService(data, key='sni_or_reverse_ip') {
     return data.reduce((acc, cur) => {
-        if (acc.hasOwnProperty(cur.sni_or_reverse_ip)) {
-            acc[cur.sni_or_reverse_ip].push(cur);
+        if (acc.hasOwnProperty(cur[key])) {
+            acc[cur[key]].push(cur);
         } else {
-            acc[cur.sni_or_reverse_ip] = [cur];
+            acc[cur[key]] = [cur];
         }
 
         return acc;

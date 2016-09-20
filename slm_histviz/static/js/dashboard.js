@@ -142,7 +142,7 @@ function makePie(target, data) {
         },
         "callbacks": {
             "onClickSegment": (e) => {
-                console.log(e);
+                // console.log(e);
                 pie.updateProp('header.title.text', forHumans(e.data.value));
                 pie.updateProp('header.subtitle.text', safe_tags_replace(e.data.label));
             }
@@ -198,7 +198,7 @@ function bindComponentsToData(data) {
     var access_by_service = groupByService(data['objects']);
     access_by_service = intervalizeAccesses(access_by_service, 10, 'seconds');
 
-    console.log(access_by_service);
+    // console.log(access_by_service);
 
     var $timeline = $("#timeline");
 
@@ -309,6 +309,6 @@ function getAccessBetweenDates(start_date, end_date) {
 
     return $.get("/api/access_log", {results_per_page: 10000, q: JSON.stringify(filters)})
         .fail(function() {
-            console.error("Couldn't get access log data!");
+            console.warn("Couldn't get access log data!");
         });
 }
