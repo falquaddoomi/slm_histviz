@@ -1443,16 +1443,28 @@ l=0;for(h=f.length;l<h;l++)if(c=f[l],b.isArray(c))q(d,c);else{g=e="";switch(c){c
  */
 
 var hn_service_map = {
-    'Facebook': [/facebook/],
-    'FB Messenger': [/graph\.facebook\.com/],
-    'Instagram': [/instagram/],
-    'Google': [/google/],
-    'Google Ping': [/1e100/],
-    'Pinterest': [/pinterest/],
-    'Snapchat': [/snapchat/]
+    'Facebook': ['facebook'],
+    'FB Messenger': ['graph.facebook.com'],
+    'Instagram': ['instagram'],
+    'Google': ['google'],
+    'Google Ping': ['1e100'],
+    'Pinterest': ['pinterest'],
+    'Snapchat': ['snapchat']
 };
 
-function hostnameToService(hostname) {}
+function hostnameToService(hostname) {
+    var found_service = "Other";
+
+    Object.keys(hn_service_map).map(function (service) {
+        if (hn_service_map[service].some(function (pattern) {
+            return hostname.includes(pattern);
+        })) {
+            found_service = service;
+        }
+    });
+
+    return found_service;
+}
 
 /**
  * Given an array of access logs, returns an object where each is grouped by the key
@@ -1464,10 +1476,12 @@ function groupByService(data) {
     var key = arguments.length <= 1 || arguments[1] === undefined ? 'sni_or_reverse_ip' : arguments[1];
 
     return data.reduce(function (acc, cur) {
-        if (acc.hasOwnProperty(cur[key])) {
-            acc[cur[key]].push(cur);
+        var v = hostnameToService(cur[key]);
+
+        if (acc.hasOwnProperty(v)) {
+            acc[v].push(cur);
         } else {
-            acc[cur[key]] = [cur];
+            acc[v] = [cur];
         }
 
         return acc;
@@ -1557,7 +1571,7 @@ function forHumans(seconds) {
 }
 
 
-'use strict';
+"use strict";
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -1584,7 +1598,29 @@ general flow of dashboard creation:
     (i.e. the pie.) (the timeline is completely recreated, unfortunately)
  */
 
+var loader_tasks = 0;
+
+function pushLoad() {
+    loader_tasks += 1;
+
+    if (loader_tasks > 0) {
+        $("#page-loader").fadeIn(100);
+    }
+}
+
+function popLoad() {
+    if (loader_tasks > 0) {
+        loader_tasks -= 1;
+    }
+
+    if (loader_tasks == 0) {
+        $("#page-loader").fadeOut(300);
+    }
+}
+
 function makeDashboard() {
+    pushLoad();
+
     // grab list of dates on which we have data
     $.get("/api/data_dates").done(function (data) {
         var dates = data['dates'].map(function (d) {
@@ -1593,17 +1629,17 @@ function makeDashboard() {
 
         // bind available dates to picker
         var predates = dates.map(function (d) {
-            var $div = $('<div class="date-choice" />');
-            var df = d.local().format("MM/DD/YYYY");
+            var df = d.utc().format("MM/DD/YYYY");
+            var $div = $('<div id="date-tab-' + df + '" class="date-choice" />');
 
             $('<a href="#' + df + '" />').text(df).click(function () {
-                fetchOnDate(d.toDate());
+                fetchOnDate(d.toDate(), $(this).parent());
             }).appendTo($div);
 
             return $div;
         });
 
-        $("#date-selector").empty().append([].concat(_toConsumableArray(predates), [$('<div class="date-choice"><input type="text" id="timeline-datepicker" /></div>')]));
+        $("#date-selector").empty().append([].concat(_toConsumableArray(predates), [$('<div class="date-choice free-selector"><input type="text" id="timeline-datepicker" /></div>')]));
 
         // create datepicker, bind to refresh data, and highlight dates on which we have data
         var $dpick = $('#timeline-datepicker');
@@ -1628,8 +1664,11 @@ function makeDashboard() {
             $dpick.datepicker('setUTCDate', moment.utc(hashed_loc).toDate());
         } else {
             // select the most recent date on which we have data
-            $dpick.datepicker('setUTCDate', dates[dates.length - 1].toDate());
+            console.log(dates);
+            $dpick.datepicker('setDate', dates[dates.length - 1].toDate());
         }
+
+        popLoad();
     });
 }
 
@@ -1653,7 +1692,7 @@ function makePie(target, data) {
         "size": {
             "canvasHeight": 300,
             "canvasWidth": 300,
-            "pieInnerRadius": "50%",
+            "pieInnerRadius": "60%",
             "pieOuterRadius": "100%"
         },
         "data": {
@@ -1772,21 +1811,24 @@ function bindComponentsToData(data) {
         return label;
     });
 
-    if (interval_width.asMinutes() > 5) {
-        chart.tickFormat({
-            format: d3.time.format("%I:%M %p"),
-            tickTime: d3.time.minutes,
-            tickInterval: 3,
-            tickSize: 6
-        });
+    // set the number of ticks according to the width of the timespan
+    // FIXME: this should adapt to any size, but still be in nice units (e.g. multiples of 5, 15, 30, 60)
+    var tickFormat = {
+        format: d3.time.format("%I:%M %p"),
+        tickTime: d3.time.minutes,
+        tickInterval: 1,
+        tickSize: 6
+    };
+
+    if (interval_width.asMinutes() > 30) {
+        tickFormat.tickInterval = 10;
+    } else if (interval_width.asMinutes() > 5) {
+        tickFormat.tickInterval = 3;
     } else {
-        chart.tickFormat({
-            format: d3.time.format("%I:%M %p"),
-            tickTime: d3.time.minutes,
-            tickInterval: 1,
-            tickSize: 6
-        });
+        tickFormat.tickInterval = 1;
     }
+
+    chart.tickFormat(tickFormat);
 
     var timeline_svg = d3.select("#timeline").append("svg").attr("width", $timeline.parent().width()).datum(timelineData).call(chart);
 
@@ -1816,21 +1858,30 @@ function bindComponentsToData(data) {
  * Fetches data and updates components for the given date.
  *
  * @param get_date js Date for which to fetch data
+ * @param $tab the jQuery element representing the tab that was selected
  */
-function fetchOnDate(get_date) {
+function fetchOnDate(get_date, $tab) {
     var utc_moment = moment.utc(get_date);
     console.log("Fetching for day ", utc_moment);
+
+    // display loader
+    pushLoad();
 
     // bind up the controls on the page
     getAccessOnDate(get_date).done(function (data) {
         // populate the bits on the page
         bindComponentsToData(data);
+
+        popLoad();
     });
 
     // highlight the date selector whose date is selected (if any)
-    var $date_selector = $("#date-selector");
-    var $selected = $date_selector.find("a:contains('" + utc_moment.local().format("MM/DD/YYYY") + "')");
-    $date_selector.find("a").filter($selected).addClass("selected").end().not($selected).removeClass("selected");
+    // if there isn't a selection, select the 'free selection' tab
+    if (!$tab) {
+        $tab = $(".date-choice.free-selector");
+    }
+
+    $("#date-selector").find(".date-choice").filter($tab).addClass("selected").end().not($tab).removeClass("selected");
 }
 
 function getAccessOnDate(start_date) {

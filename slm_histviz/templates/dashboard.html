@@ -13,14 +13,21 @@
 
 {% block style %}
     <style>
+    #page-loader {
+        position: absolute; top: 200px;
+        left: 0; right: 0;
+        margin-left: auto; margin-right: auto;
+        width: 196px; height: 196px;
+        background-image: url('{{ url_for('static', filename='img/ring-alt.svg') }}');
+    }
+
     .datepicker-days .has-data {
         background-color: yellow;
     }
 
     #date-selector {
         border-bottom: dotted 1px #ccc;
-        padding: 5px;
-        padding-bottom: 10px;
+        padding: 0;
         display: flex;
     }
     #date-selector label {
@@ -28,8 +35,14 @@
     }
     #date-selector .date-choice {
         flex: 1 1;
+        text-align: center;
+        padding: 5px;
     }
-    #date-selector .date-choice .selected {
+    #date-selector .date-choice.selected {
+        border-bottom: solid 5px #7ebaf2;
+        background: #eee;
+    }
+    #date-selector .date-choice.selected a {
         font-weight: bold;
     }
 
@@ -99,6 +112,8 @@
     <div id="dash-root"></div>
 
     <div class="dash">
+        <div id="page-loader" style="display: none;"></div>
+
         <div class="timeline-summary-row">
             <div class="dash-panel points-timeline" style="padding: 0px; height: 300px; overflow-y: auto; overflow-x: hidden;">
                 <!-- this is some kind of visualization of accesses to different services over time -->

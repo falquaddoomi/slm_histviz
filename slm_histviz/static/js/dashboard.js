@@ -21,28 +21,50 @@ general flow of dashboard creation:
     (i.e. the pie.) (the timeline is completely recreated, unfortunately)
  */
 
+var loader_tasks = 0;
+
+function pushLoad() {
+    loader_tasks += 1;
+
+    if (loader_tasks > 0) {
+        $("#page-loader").fadeIn(100);
+    }
+}
+
+function popLoad() {
+    if (loader_tasks > 0) {
+        loader_tasks -= 1;
+    }
+
+    if (loader_tasks == 0) {
+        $("#page-loader").fadeOut(300);
+    }
+}
+
 
 function makeDashboard() {
+    pushLoad();
+
     // grab list of dates on which we have data
     $.get("/api/data_dates").done(function(data) {
         var dates = data['dates'].map((d) => moment.utc(d[0]));
 
         // bind available dates to picker
         var predates = dates.map((d) => {
-            var $div = $('<div class="date-choice" />');
-            var df = d.local().format("MM/DD/YYYY");
+            var df = d.utc().format("MM/DD/YYYY");
+            var $div = $('<div id="date-tab-' + df + '" class="date-choice" />');
 
             $('<a href="#' + df + '" />')
                 .text(df)
                 .click(function() {
-                    fetchOnDate(d.toDate());
+                    fetchOnDate(d.toDate(), $(this).parent());
                 }).appendTo($div);
 
             return $div;
         });
 
         $("#date-selector").empty().append(
-            [ ...predates, $('<div class="date-choice"><input type="text" id="timeline-datepicker" /></div>') ]
+            [ ...predates, $('<div class="date-choice free-selector"><input type="text" id="timeline-datepicker" /></div>') ]
         );
 
         // create datepicker, bind to refresh data, and highlight dates on which we have data
@@ -68,8 +90,11 @@ function makeDashboard() {
         }
         else {
             // select the most recent date on which we have data
-            $dpick.datepicker('setUTCDate', dates[dates.length-1].toDate());
+            console.log(dates);
+            $dpick.datepicker('setDate', dates[dates.length-1].toDate());
         }
+
+        popLoad();
     });
 }
 
@@ -93,7 +118,7 @@ function makePie(target, data) {
         "size": {
             "canvasHeight": 300,
             "canvasWidth": 300,
-            "pieInnerRadius": "50%",
+            "pieInnerRadius": "60%",
             "pieOuterRadius": "100%"
         },
         "data": {
@@ -221,22 +246,26 @@ function bindComponentsToData(data) {
         .margin({left: 150, top: 0, right: 5, bottom: 0})
         .labelFormat(function(label){ return label; });
 
-    if (interval_width.asMinutes() > 5) {
-        chart.tickFormat({
-            format: d3.time.format("%I:%M %p"),
-            tickTime: d3.time.minutes,
-            tickInterval: 3,
-            tickSize: 6
-        });
+    // set the number of ticks according to the width of the timespan
+    // FIXME: this should adapt to any size, but still be in nice units (e.g. multiples of 5, 15, 30, 60)
+    var tickFormat = {
+        format: d3.time.format("%I:%M %p"),
+        tickTime: d3.time.minutes,
+        tickInterval: 1,
+        tickSize: 6
+    };
+
+    if (interval_width.asMinutes() > 30) {
+        tickFormat.tickInterval = 10;
+    }
+    else if (interval_width.asMinutes() > 5) {
+        tickFormat.tickInterval = 3;
     }
     else {
-        chart.tickFormat({
-            format: d3.time.format("%I:%M %p"),
-            tickTime: d3.time.minutes,
-            tickInterval: 1,
-            tickSize: 6
-        });
+        tickFormat.tickInterval = 1;
     }
+
+    chart.tickFormat(tickFormat);
 
     var timeline_svg = d3.select("#timeline")
         .append("svg")
@@ -271,24 +300,32 @@ function bindComponentsToData(data) {
  * Fetches data and updates components for the given date.
  *
  * @param get_date js Date for which to fetch data
+ * @param $tab the jQuery element representing the tab that was selected
  */
-function fetchOnDate(get_date) {
+function fetchOnDate(get_date, $tab) {
     var utc_moment = moment.utc(get_date);
     console.log("Fetching for day ", utc_moment);
+
+    // display loader
+    pushLoad();
 
     // bind up the controls on the page
     getAccessOnDate(get_date).done(function(data) {
         // populate the bits on the page
         bindComponentsToData(data);
+
+        popLoad();
     });
 
     // highlight the date selector whose date is selected (if any)
-    var $date_selector = $("#date-selector");
-    var $selected = $date_selector.find("a:contains('" + utc_moment.local().format("MM/DD/YYYY") + "')");
-    $date_selector.find("a")
-        .filter($selected).addClass("selected").end()
-        .not($selected).removeClass("selected");
+    // if there isn't a selection, select the 'free selection' tab
+    if (!$tab) {
+        $tab = $(".date-choice.free-selector");
+    }
 
+    $("#date-selector").find(".date-choice")
+    .filter($tab).addClass("selected").end()
+    .not($tab).removeClass("selected");
 }
 
 function getAccessOnDate(start_date) {

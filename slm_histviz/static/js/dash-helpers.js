@@ -8,17 +8,25 @@
  */
 
 var hn_service_map = {
-    'Facebook': [/facebook/],
-    'FB Messenger': [/graph\.facebook\.com/],
-    'Instagram': [/instagram/],
-    'Google': [/google/],
-    'Google Ping': [/1e100/],
-    'Pinterest': [/pinterest/],
-    'Snapchat': [/snapchat/]
+    'Facebook': ['facebook'],
+    'FB Messenger': ['graph.facebook.com'],
+    'Instagram': ['instagram'],
+    'Google': ['google'],
+    'Google Ping': ['1e100'],
+    'Pinterest': ['pinterest'],
+    'Snapchat': ['snapchat']
 };
 
 function hostnameToService(hostname) {
+    var found_service = "Other";
 
+    Object.keys(hn_service_map).map(service => {
+        if (hn_service_map[service].some(pattern => hostname.includes(pattern))) {
+            found_service = service;
+        }
+    });
+
+    return found_service;
 }
 
 /**
@@ -29,10 +37,12 @@ function hostnameToService(hostname) {
  */
 function groupByService(data, key='sni_or_reverse_ip') {
     return data.reduce((acc, cur) => {
-        if (acc.hasOwnProperty(cur[key])) {
-            acc[cur[key]].push(cur);
+        var v = hostnameToService(cur[key]);
+
+        if (acc.hasOwnProperty(v)) {
+            acc[v].push(cur);
         } else {
-            acc[cur[key]] = [cur];
+            acc[v] = [cur];
         }
 
         return acc;
