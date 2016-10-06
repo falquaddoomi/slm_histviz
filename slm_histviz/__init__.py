@@ -17,3 +17,6 @@ import slm_histviz.auth
 import slm_histviz.filters
 import slm_histviz.views
 import slm_histviz.api
+
+# extra analysis views
+import slm_histviz.analysis.views

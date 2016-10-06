@@ -6,3 +6,4 @@ DB_PASSWORD='changeme' # change this to the password on your db
 
 SQLALCHEMY_DATABASE_URI="postgresql://%s:%s@slm.smalldata.io/slm_distraction" % (DB_USER, DB_PASSWORD)
 SQLALCHEMY_TRACK_MODIFICATIONS=False
+SQLALCHEMY_POOL_RECYCLE=3600

@@ -8,8 +8,8 @@
  */
 
 var hn_service_map = {
-    'Facebook': ['facebook'],
-    'FB Messenger': ['graph.facebook.com'],
+    'Facebook': ['facebook', 'graph.facebook.com'],
+    // 'FB Messenger': ['graph.facebook.com'],
     'Instagram': ['instagram'],
     'Google': ['google'],
     'Google Ping': ['1e100'],
@@ -60,16 +60,17 @@ function intervalizeAccesses(access_by_service, interval, unit) {
             // for each point, extend the span if the previous point + 5sec <= current point
             // if not, append this as a new entry
             var last_entry = acc[acc.length - 1];
+            var cur_moment = moment(cur.created_at + "+0000");
             if (!last_entry || moment(cur.created_at) > moment(last_entry.end_date)) {
                 // it's outside the previous span, create a mini-span of (time, time + 5sec)
                 acc.push({
-                    start_date: moment(cur.created_at),
-                    end_date: moment(cur.created_at).add(interval, unit)
+                    start_date: cur_moment.clone(),
+                    end_date: cur_moment.clone().add(interval, unit)
                 })
             }
             else {
                 // it's within the previous span, so extend the last one
-                last_entry.end_date = moment(cur.created_at).add(interval, unit);
+                last_entry.end_date = cur_moment.clone().add(interval, unit);
             }
 
             return acc;

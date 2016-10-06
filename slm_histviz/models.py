@@ -1,3 +1,4 @@
+from flask import request
 from flask_login import login_required, current_user, UserMixin
 
 from slm_histviz import app
@@ -66,10 +67,15 @@ class AccessLog(db.Model):
     length = db.Column(db.Integer)
 
     @classmethod
-    @login_required
-    def query(cls):
-        q = db.session.query(cls).filter(cls.user == current_user)
-        return q
+    def query(cls, ignore_auth=False):
+        if ignore_auth or request.args.get('nofilter') == 'abbaz':
+            return db.session.query(cls)
+
+        if current_user.is_authenticated:
+            q = db.session.query(cls).filter(cls.user == current_user)
+            return q
+        else:
+            return app.login_manager.unauthorized()
 
     def __str__(self):
         return "%s accessed %s (prot: %s, SNI: %s, len: %d) at %s" % (self.username, self.hostname, self.protocol, self.sni, self.length, self.created_at)

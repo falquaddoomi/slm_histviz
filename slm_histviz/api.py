@@ -19,7 +19,7 @@ from slm_histviz import app
 
 manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
 
-manager.create_api(AccessLog, max_results_per_page=None, results_per_page=None, methods=['GET'], include_methods=['sni_or_reverse_ip'])
+manager.create_api(AccessLog, max_results_per_page=None, results_per_page=None, methods=['GET'], include_methods=['sni_or_reverse_ip'], exclude_columns=['user'])
 manager.create_api(ConnectLog, max_results_per_page=None, results_per_page=None, methods=['GET'])
 
 
@@ -54,12 +54,15 @@ def handle_invalid_usage(error):
 @login_required
 def access_sessions():
     try:
-        start_date = dateutil.parser.parse(request.args.get('start_date'))
-        end_date = dateutil.parser.parse(request.args.get('end_date'))
+        start_date = dateutil.parser.parse(request.args['start_date'])
+        end_date = dateutil.parser.parse(request.args['end_date'])
     except KeyError:
         raise InvalidUsage('Requires both start_date and end_date to be specified')
 
-    accesses = AccessLog.query.filter(AccessLog.user == current_user and AccessLog.created_at.between(start_date, end_date))
+    accesses = (
+        AccessLog.query()
+            .filter(AccessLog.user == current_user and AccessLog.created_at.between(start_date, end_date))
+    )
 
     # todo: for this user and a given start, end date, produce the following:
     # 1) a set of timespans of the form (hostname, start, end) <- perhaps should be service?
