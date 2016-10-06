@@ -46,7 +46,7 @@ function makeDashboard() {
     pushLoad();
 
     // grab list of dates on which we have data
-    $.get("/api/data_dates").done(function(data) {
+    $.get("api/data_dates").done(function(data) {
         var dates = data['dates'].map((d) => moment.utc(d[0]));
 
         // bind available dates to picker
@@ -344,7 +344,7 @@ function getAccessBetweenDates(start_date, end_date) {
         ]}
     ]};
 
-    return $.get("/api/access_log", {results_per_page: 10000, q: JSON.stringify(filters)})
+    return $.get("api/access_log", {results_per_page: 10000, q: JSON.stringify(filters)})
         .fail(function() {
             console.warn("Couldn't get access log data!");
         });
