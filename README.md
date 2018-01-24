@@ -1,3 +1,5 @@
+***NOTE: the PPTPTP server mentioned below was superseded by an IPSEC server, code located here: https://github.com/smalldatalab/ipsec-vpn-sniffer***
+
 SLM Distraction Tracker
 ===
 
